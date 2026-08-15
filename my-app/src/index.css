@@ -1,27 +1,25 @@
 :root {
-  /* Palette pulled from the logo */
-  --navy-900: #0f1a33;
-  --navy-800: #1b2a4a;
-  --navy-700: #21345e;
-  --indigo: #3a3b6b;
-  --sunset: #c97b54;
-  --gold: #caa46a;
-  --gold-soft: #f2c97a;
-  --cream: #fdf3d8;
-  --brown: #8c4a35;
+  /* Warm SoCal palette — coral, orange, gold, cream */
+  --coral: #ff6b54;
+  --coral-deep: #e85d3d;
+  --orange: #ff9447;
+  --gold: #ffc145;
+  --sunshine: #ffd166;
+  --cream: #fff6e9;
+  --paper: #fffdf7;
+  --sky-blue: #8ed3e8;
+  --ocean: #5fb6d4;
 
-  --ink: #1c2333;
-  --muted: #5c6577;
-  --paper: #fbf7ef;
-  --white: #ffffff;
-  --line: #e7ddc9;
+  --ink: #4a2c2a;
+  --muted: #7a5347;
+  --line: #f5dfc0;
 
   --font: 'Segoe UI', system-ui, -apple-system, Roboto, Helvetica, Arial,
     sans-serif;
   --serif: 'Georgia', 'Times New Roman', serif;
 
-  --radius: 14px;
-  --shadow: 0 18px 40px -20px rgba(15, 26, 51, 0.45);
+  --radius: 22px;
+  --shadow: 0 10px 30px rgba(198, 75, 48, 0.18);
   --max: 1140px;
 }
 
@@ -37,8 +35,9 @@ body {
   margin: 0;
   font-family: var(--font);
   color: var(--ink);
-  background: var(--paper);
+  background: var(--cream);
   line-height: 1.6;
+  overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
 }
 
@@ -47,16 +46,32 @@ h2,
 h3 {
   font-family: var(--serif);
   line-height: 1.15;
-  color: var(--navy-900);
   margin: 0 0 0.5em;
 }
 
-a {
-  color: inherit;
-  text-decoration: none;
+p {
+  margin: 0 0 1em;
 }
 
 img {
-  display: block;
   max-width: 100%;
+  display: block;
+}
+
+a {
+  color: var(--coral-deep);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  .reveal {
+    opacity: 1 !important;
+    transform: none !important;
+  }
 }
