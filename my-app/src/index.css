@@ -1,25 +1,32 @@
 :root {
-  /* Warm SoCal palette — coral, orange, gold, cream */
-  --coral: #ff6b54;
-  --coral-deep: #e85d3d;
-  --orange: #ff9447;
-  --gold: #ffc145;
-  --sunshine: #ffd166;
-  --cream: #fff6e9;
-  --paper: #fffdf7;
-  --sky-blue: #8ed3e8;
-  --ocean: #5fb6d4;
+  /* Blue palette — navy depth, azure mid-tones, gold accent from the logo */
+  --navy-deep: #0f1a33;
+  --navy: #1b2a4a;
+  --navy-700: #21345e;
+  --indigo: #3a3b6b;
+  --azure: #2e6fa7;
+  --azure-light: #3e8fc4;
+  --sky: #7fb8dc;
+  --sky-pale: #bfdff2;
+  --mist: #eaf3f9;
+  --paper: #fbfdfe;
+  --white: #ffffff;
 
-  --ink: #4a2c2a;
-  --muted: #7a5347;
-  --line: #f5dfc0;
+  --gold: #caa46a;
+  --gold-soft: #e4c489;
+  --sand: #e0d3b8;
+
+  --ink: #14203a;
+  --muted: #55637e;
+  --line: #dce7f0;
 
   --font: 'Segoe UI', system-ui, -apple-system, Roboto, Helvetica, Arial,
     sans-serif;
   --serif: 'Georgia', 'Times New Roman', serif;
 
-  --radius: 22px;
-  --shadow: 0 10px 30px rgba(198, 75, 48, 0.18);
+  --radius: 16px;
+  --shadow: 0 12px 32px -12px rgba(15, 26, 51, 0.28);
+  --shadow-lg: 0 24px 60px -20px rgba(15, 26, 51, 0.42);
   --max: 1140px;
 }
 
@@ -35,8 +42,8 @@ body {
   margin: 0;
   font-family: var(--font);
   color: var(--ink);
-  background: var(--cream);
-  line-height: 1.6;
+  background: var(--mist);
+  line-height: 1.65;
   overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
 }
@@ -45,7 +52,8 @@ h1,
 h2,
 h3 {
   font-family: var(--serif);
-  line-height: 1.15;
+  line-height: 1.2;
+  letter-spacing: -0.01em;
   margin: 0 0 0.5em;
 }
 
@@ -59,7 +67,7 @@ img {
 }
 
 a {
-  color: var(--coral-deep);
+  color: var(--azure);
 }
 
 @media (prefers-reduced-motion: reduce) {
