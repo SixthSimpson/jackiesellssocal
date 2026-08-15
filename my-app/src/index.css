@@ -1,0 +1,62 @@
+:root {
+  /* Palette pulled from the logo */
+  --navy-900: #0f1a33;
+  --navy-800: #1b2a4a;
+  --navy-700: #21345e;
+  --indigo: #3a3b6b;
+  --sunset: #c97b54;
+  --gold: #caa46a;
+  --gold-soft: #f2c97a;
+  --cream: #fdf3d8;
+  --brown: #8c4a35;
+
+  --ink: #1c2333;
+  --muted: #5c6577;
+  --paper: #fbf7ef;
+  --white: #ffffff;
+  --line: #e7ddc9;
+
+  --font: 'Segoe UI', system-ui, -apple-system, Roboto, Helvetica, Arial,
+    sans-serif;
+  --serif: 'Georgia', 'Times New Roman', serif;
+
+  --radius: 14px;
+  --shadow: 0 18px 40px -20px rgba(15, 26, 51, 0.45);
+  --max: 1140px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font);
+  color: var(--ink);
+  background: var(--paper);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1,
+h2,
+h3 {
+  font-family: var(--serif);
+  line-height: 1.15;
+  color: var(--navy-900);
+  margin: 0 0 0.5em;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+img {
+  display: block;
+  max-width: 100%;
+}

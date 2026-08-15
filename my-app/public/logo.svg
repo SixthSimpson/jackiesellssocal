@@ -1,0 +1,69 @@
+<svg width="420" height="420" viewBox="0 0 420 420" xmlns="http://www.w3.org/2000/svg">
+<defs>
+<clipPath id="ring2">
+<circle cx="210" cy="210" r="150"/>
+</clipPath>
+<linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+<stop offset="0" stop-color="#21345e"/>
+<stop offset="0.55" stop-color="#3a3b6b"/>
+<stop offset="1" stop-color="#c97b54"/>
+</linearGradient>
+</defs>
+
+<circle cx="210" cy="210" r="150" fill="url(#sky)"/>
+
+<g clip-path="url(#ring2)">
+<circle cx="150" cy="120" r="34" fill="#f2c97a" opacity="0.9"/>
+<circle cx="150" cy="120" r="46" fill="#f2c97a" opacity="0.18"/>
+
+<circle cx="95" cy="95" r="2" fill="#fdf3d8"/>
+<circle cx="300" cy="110" r="2" fill="#fdf3d8"/>
+<circle cx="270" cy="70" r="1.6" fill="#fdf3d8"/>
+<circle cx="120" cy="200" r="1.6" fill="#fdf3d8"/>
+<circle cx="330" cy="170" r="1.6" fill="#fdf3d8"/>
+
+<rect x="60" y="335" width="300" height="40" fill="#3a241c"/>
+
+<g>
+<polygon points="118,252 168,214 218,252" fill="#caa46a"/>
+<polygon points="168,214 218,252 168,252" fill="#b8945c"/>
+<rect x="128" y="252" width="80" height="95" fill="#8c4a35"/>
+<rect x="128" y="252" width="40" height="95" fill="#9a5440"/>
+<rect x="140" y="272" width="18" height="20" rx="2" fill="#ffd87a"/>
+<rect x="178" y="272" width="18" height="20" rx="2" fill="#ffd87a"/>
+<rect x="158" y="307" width="20" height="40" rx="2" fill="#5e2f22"/>
+</g>
+
+<g>
+<polygon points="195,148 258,104 321,148" fill="#caa46a"/>
+<polygon points="258,104 321,148 258,148" fill="#b8945c"/>
+<rect x="208" y="148" width="100" height="199" fill="#7a3f2e"/>
+<rect x="208" y="148" width="50" height="199" fill="#8c4a35"/>
+<rect x="224" y="170" width="20" height="22" rx="2" fill="#ffd87a"/>
+<rect x="272" y="170" width="20" height="22" rx="2" fill="#ffd87a"/>
+<rect x="224" y="206" width="20" height="22" rx="2" fill="#ffd87a"/>
+<rect x="272" y="206" width="20" height="22" rx="2" fill="#7a5c34"/>
+<rect x="248" y="307" width="22" height="40" rx="2" fill="#5e2f22"/>
+</g>
+
+<g>
+<polygon points="270,256 318,220 366,256" fill="#caa46a"/>
+<polygon points="318,220 366,256 318,256" fill="#b8945c"/>
+<rect x="282" y="256" width="76" height="91" fill="#8c4a35"/>
+<rect x="282" y="256" width="38" height="91" fill="#9a5440"/>
+<rect x="294" y="276" width="18" height="20" rx="2" fill="#ffd87a"/>
+<rect x="330" y="276" width="18" height="20" rx="2" fill="#7a5c34"/>
+<rect x="310" y="310" width="20" height="37" rx="2" fill="#5e2f22"/>
+</g>
+</g>
+
+<circle cx="210" cy="210" r="150" fill="none" stroke="#0f1a33" stroke-width="3"/>
+<circle cx="210" cy="210" r="170" fill="none" stroke="#caa46a" stroke-width="7"/>
+<circle cx="210" cy="210" r="178" fill="none" stroke="#1b2a4a" stroke-width="2"/>
+<circle cx="210" cy="210" r="160" fill="none" stroke="#1b2a4a" stroke-width="2"/>
+
+<circle cx="210" cy="40" r="4" fill="#caa46a"/>
+<circle cx="210" cy="380" r="4" fill="#caa46a"/>
+<circle cx="40" cy="210" r="4" fill="#caa46a"/>
+<circle cx="380" cy="210" r="4" fill="#caa46a"/>
+</svg>
