@@ -289,6 +289,7 @@ h2 { font-size: clamp(1.7rem, 3.2vw, 2.4rem); }
 /* ══════════════ HERO · DOWNTOWN SKYLINE ══════════════ */
 .hero {
   min-height: 100vh;
+  min-height: 100dvh; /* mobile browser chrome shrinks the viewport as you scroll */
   display: flex;
   align-items: center;
   padding: 140px 6vw 300px;
@@ -449,7 +450,8 @@ h2 { font-size: clamp(1.7rem, 3.2vw, 2.4rem); }
   position: relative;
   z-index: 1;
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
+  /* min() keeps the track from forcing overflow on screens under 290px */
+  grid-template-columns: repeat(auto-fit, minmax(min(290px, 100%), 1fr));
   gap: 30px;
   max-width: 1120px;
   margin: 0 auto;
@@ -500,7 +502,7 @@ h2 { font-size: clamp(1.7rem, 3.2vw, 2.4rem); }
 .services { padding: 100px 6vw 120px; }
 .svc-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(260px, 100%), 1fr));
   gap: 24px;
   max-width: 1120px;
   margin: 34px auto 0;
@@ -619,6 +621,12 @@ h2 { font-size: clamp(1.7rem, 3.2vw, 2.4rem); }
 }
 .form-success h3 { color: var(--navy-700); }
 .form-success p { color: var(--muted); margin: 0; }
+.form-success a {
+  color: var(--navy-700);
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
 
 .scene-beach { height: 340px; }
 .wave { will-change: transform; }
@@ -661,6 +669,7 @@ h2 { font-size: clamp(1.7rem, 3.2vw, 2.4rem); }
     position: fixed;
     top: 0; right: 0;
     height: 100vh;
+    height: 100dvh;
     width: min(78vw, 320px);
     flex-direction: column;
     justify-content: center;
@@ -683,4 +692,77 @@ h2 { font-size: clamp(1.7rem, 3.2vw, 2.4rem); }
   .scene-beach { height: 250px; }
   .neighborhoods { padding-bottom: 260px; }
   .contact { padding-bottom: 300px; }
+}
+
+/* ── Phones ─────────────────────────────────────────────────── */
+@media (max-width: 600px) {
+  /* Header: give the burger room by trimming the brand block */
+  .site-header { padding: 8px 5vw; }
+  .brand-logo { width: 38px; height: 38px; }
+  .brand-text strong { font-size: 0.98rem; }
+  .brand-text small { font-size: 0.62rem; letter-spacing: 0.1em; }
+  .nav { width: min(84vw, 300px); gap: 6px; }
+  .nav a { font-size: 1.05rem; padding: 12px 0; } /* taller tap targets */
+  .nav-cta { margin-top: 10px; }
+
+  /* Vertical rhythm: desktop spacing eats the whole screen on a phone */
+  .hero { padding: 116px 6vw calc(38vw + 65px); }
+  .about { padding: 64px 6vw 76px; gap: 44px; }
+  .neighborhoods { padding: 70px 6vw calc(44vw + 70px); }
+  .services { padding: 64px 6vw 76px; }
+  .contact { padding: 70px 6vw calc(38vw + 70px); }
+  .stats { padding: 44px 6vw 8px; gap: 14px; }
+  .section-head { margin-bottom: 32px; }
+
+  /* The layers have no CSS height, so each one draws at width x (vbH / vbW).
+     With the phone viewBox that's 100vw x (vbH / 680) — so the scene heights
+     track vw, holding the same band of sky above the art at every width. */
+  .scene-downtown { height: calc(38vw + 45px); }
+  .scene-hollywood { height: calc(44vw + 45px); }
+  .scene-beach { height: calc(38vw + 45px); }
+
+  /* Hero: full-width buttons read as proper tap targets */
+  .hero-sub { font-size: 1.02rem; margin: 18px 0 26px; }
+  .hero-actions { gap: 12px; }
+  .hero-actions .btn { width: 100%; justify-content: center; }
+
+  /* Stats stay full cards — just full-width instead of a 210px min */
+  .stats { flex-direction: column; }
+  .stat { min-width: 0; width: 100%; padding: 22px 24px; }
+  .stat-value { font-size: 2rem; }
+
+  .about-text .btn { width: 100%; justify-content: center; }
+  .profile-card { max-width: 100%; }
+  .sold-sign { width: 80px; right: -6px; bottom: 130px; }
+
+  .card-body { padding: 20px 20px 22px; }
+  .svc-card { padding: 28px 22px; }
+
+  /* Contact: label-above-value so long emails stop colliding */
+  .contact-panel { padding: 28px 20px; gap: 28px; border-radius: 16px; }
+  .contact-list li {
+    display: grid;
+    gap: 2px;
+    padding-bottom: 10px;
+  }
+  .contact-list span { min-width: 0; }
+  .contact-list a, .contact-list p { overflow-wrap: anywhere; }
+  .contact-form .btn { width: 100%; justify-content: center; }
+  .form-success { padding: 26px 20px; }
+
+  .footer-meta { gap: 8px 18px; font-size: 0.92rem; }
+
+  /* The phone viewBox frames x 760–1440 to keep the pier and ferris wheel in
+     shot, which leaves the palms and umbrella (x 150–576) outside it. Slide
+     them into the new window. These override the SVG transform attribute, so
+     each one restates its full transform. */
+  .beach-palm-a  { transform: translate(880px, 54px); }
+  .beach-palm-b  { transform: translate(1050px, 96px) scale(0.72); }
+  .beach-umbrella { transform: translate(1330px, 152px); }
+}
+
+/* ── Small phones (SE, mini) ────────────────────────────────── */
+@media (max-width: 380px) {
+  .brand-text small { display: none; }
+  .contact-panel { padding: 24px 16px; }
 }

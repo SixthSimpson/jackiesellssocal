@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useSyncExternalStore } from 'react'
 import './App.css'
 import logo from '/logo.svg'
 
@@ -302,11 +302,41 @@ function Sky() {
   )
 }
 
-/* ── Parallax scene bands ──────────────────────────────────── */
+/* ── Parallax scene bands ────────────────────────────────────
+   The layers are width:100% SVGs, so their artwork scales with the
+   viewport: a 1440-unit composition renders at ~27% on a 390px phone.
+   On phones we swap in a 680-unit viewBox instead — same physical width,
+   half the units, so the art draws ~2x larger — and aim that window at
+   each scene's landmark rather than its empty middle. Every layer in a
+   scene shares the 680 width so they stay in parallax alignment. */
+const PHONE_SCENES = '(max-width: 600px)'
+const PHONE_VB_WIDTH = 680
+
+function usePhoneScenes() {
+  return useSyncExternalStore(
+    (onChange) => {
+      const mq = window.matchMedia(PHONE_SCENES)
+      mq.addEventListener('change', onChange)
+      return () => mq.removeEventListener('change', onChange)
+    },
+    () => window.matchMedia(PHONE_SCENES).matches,
+  )
+}
+
+// `focus` is the left edge of the phone window, in viewBox units.
+function useSceneBox(focus) {
+  const phone = usePhoneScenes()
+  return (height) =>
+    phone
+      ? `${focus} 0 ${PHONE_VB_WIDTH} ${height}`
+      : `0 0 1440 ${height}`
+}
+
 function SceneDowntown() {
+  const box = useSceneBox(380) // repeating skyline — centre is fine
   return (
     <div className="scene scene-downtown" aria-hidden="true">
-      <svg className="p-layer" data-speed="0.12" viewBox="0 0 1440 260" preserveAspectRatio="xMidYMax slice">
+      <svg className="p-layer" data-speed="0.12" viewBox={box(260)} preserveAspectRatio="xMidYMax slice">
         <g fill="#A8C8E0" opacity="0.55">
           <rect x="40" y="120" width="70" height="140" />
           <rect x="150" y="80" width="60" height="180" />
@@ -321,7 +351,7 @@ function SceneDowntown() {
           <rect x="1340" y="140" width="70" height="120" />
         </g>
       </svg>
-      <svg className="p-layer" data-speed="0.28" viewBox="0 0 1440 240" preserveAspectRatio="xMidYMax slice">
+      <svg className="p-layer" data-speed="0.28" viewBox={box(240)} preserveAspectRatio="xMidYMax slice">
         <g fill="#6B9BC4" opacity="0.8">
           <rect x="0" y="110" width="80" height="130" />
           <rect x="120" y="60" width="70" height="180" />
@@ -336,7 +366,7 @@ function SceneDowntown() {
           <rect x="1290" y="110" width="80" height="130" />
         </g>
       </svg>
-      <svg className="p-layer" data-speed="0.5" viewBox="0 0 1440 220" preserveAspectRatio="xMidYMax slice">
+      <svg className="p-layer" data-speed="0.5" viewBox={box(220)} preserveAspectRatio="xMidYMax slice">
         <g fill="#21345E">
           <rect x="20" y="80" width="95" height="140" />
           <rect x="170" y="40" width="75" height="180" />
@@ -367,16 +397,17 @@ function SceneDowntown() {
 }
 
 function SceneHollywood() {
+  const box = useSceneBox(760) // frame the HOLLYWOOD sign (x 960–1300)
   return (
     <div className="scene scene-hollywood" aria-hidden="true">
-      <svg className="p-layer" data-speed="0.15" viewBox="0 0 1440 300" preserveAspectRatio="xMidYMax slice">
+      <svg className="p-layer" data-speed="0.15" viewBox={box(300)} preserveAspectRatio="xMidYMax slice">
         <path
           d="M0 300 L0 190 Q180 90 380 170 Q560 240 760 150 Q980 60 1180 160 Q1320 230 1440 180 L1440 300 Z"
           fill="#5D89B5"
           opacity="0.45"
         />
       </svg>
-      <svg className="p-layer" data-speed="0.3" viewBox="0 0 1440 300" preserveAspectRatio="xMidYMax slice">
+      <svg className="p-layer" data-speed="0.3" viewBox={box(300)} preserveAspectRatio="xMidYMax slice">
         <path
           d="M0 300 L0 220 Q220 130 460 210 Q660 270 900 190 Q1140 110 1440 220 L1440 300 Z"
           fill="#2A4368"
@@ -408,9 +439,10 @@ function SceneHollywood() {
 }
 
 function SceneCoast() {
+  const box = useSceneBox(760) // frame the pier and ferris wheel (x 1050–1440)
   return (
     <div className="scene scene-beach" aria-hidden="true">
-      <svg className="p-layer" data-speed="0.1" viewBox="0 0 1440 260" preserveAspectRatio="xMidYMax slice">
+      <svg className="p-layer" data-speed="0.1" viewBox={box(260)} preserveAspectRatio="xMidYMax slice">
         <g stroke="#1B2A4A" strokeWidth="9" opacity="0.9">
           <line x1="1080" y1="150" x2="1080" y2="260" />
           <line x1="1140" y1="150" x2="1140" y2="260" />
@@ -437,10 +469,10 @@ function SceneCoast() {
           <polygon points="-14,44 14,44 0,0" fill="#1B2A4A" />
         </g>
       </svg>
-      <svg className="p-layer" data-speed="0.25" viewBox="0 0 1440 240" preserveAspectRatio="xMidYMax slice">
+      <svg className="p-layer" data-speed="0.25" viewBox={box(240)} preserveAspectRatio="xMidYMax slice">
         {/* Shoreline sits above the wave layer so the sand stays visible */}
         <path d="M0 240 L0 120 Q360 100 720 118 Q1080 136 1440 110 L1440 240 Z" fill="var(--sand)" />
-        <g transform="translate(150,54)">
+        <g className="beach-palm-a" transform="translate(150,54)">
           <g className="palm-sway">
             <path d="M0 130 Q10 60 4 8" stroke="#1B2A4A" strokeWidth="11" fill="none" strokeLinecap="round" />
             <g fill="#21345E">
@@ -451,7 +483,7 @@ function SceneCoast() {
             </g>
           </g>
         </g>
-        <g transform="translate(340,96) scale(0.72)">
+        <g className="beach-palm-b" transform="translate(340,96) scale(0.72)">
           <g className="palm-sway-slow">
             <path d="M0 130 Q-10 60 -4 8" stroke="#1B2A4A" strokeWidth="11" fill="none" strokeLinecap="round" />
             <g fill="#21345E">
@@ -462,13 +494,13 @@ function SceneCoast() {
             </g>
           </g>
         </g>
-        <g transform="translate(576,152)">
+        <g className="beach-umbrella" transform="translate(576,152)">
           <line x1="0" y1="0" x2="0" y2="48" stroke="#1B2A4A" strokeWidth="4" />
           <path d="M-44 4 A44 44 0 0 1 44 4 Z" fill="#21345E" />
           <path d="M-22 4 A22 38 0 0 1 22 4 Z" fill="var(--gold)" />
         </g>
       </svg>
-      <svg className="p-layer wave-layer" data-speed="0.4" viewBox="0 0 1440 120" preserveAspectRatio="xMidYMax slice">
+      <svg className="p-layer wave-layer" data-speed="0.4" viewBox={box(120)} preserveAspectRatio="xMidYMax slice">
         <path
           className="wave wave-back"
           d="M-100 120 L-100 60 Q-25 30 50 60 Q125 90 200 60 Q275 30 350 60 Q425 90 500 60 Q575 30 650 60 Q725 90 800 60 Q875 30 950 60 Q1025 90 1100 60 Q1175 30 1250 60 Q1325 90 1400 60 Q1475 30 1550 60 L1550 120 Z"
@@ -563,8 +595,41 @@ function App() {
   useScrollScenery()
   useReveals()
 
+  // The mobile menu is a fixed overlay; without this the page scrolls behind it.
+  useEffect(() => {
+    document.body.style.overflow = menuOpen ? 'hidden' : ''
+    return () => {
+      document.body.style.overflow = ''
+    }
+  }, [menuOpen])
+
+  // Opens the visitor's mail client with the message pre-filled. They still
+  // have to press send there — the success panel says so.
   const handleSubmit = (e) => {
     e.preventDefault()
+    const data = new FormData(e.target)
+    const get = (field) => (data.get(field) || '').trim()
+    const name = get('name')
+    const phone = get('phone')
+
+    const subject = name
+      ? `Website inquiry from ${name}`
+      : 'Website inquiry'
+    const body = [
+      `Name: ${name}`,
+      `Email: ${get('email')}`,
+      phone && `Phone: ${phone}`,
+      '',
+      get('message'),
+    ]
+      .filter((line) => line !== false)
+      .join('\n')
+
+    window.location.href =
+      `mailto:${AGENT.email}` +
+      `?subject=${encodeURIComponent(subject)}` +
+      `&body=${encodeURIComponent(body)}`
+
     setSent(true)
   }
 
@@ -781,10 +846,13 @@ function App() {
             <form className="contact-form" onSubmit={handleSubmit}>
               {sent ? (
                 <div className="form-success">
-                  <h3>Thank you</h3>
+                  <h3>One last step</h3>
                   <p>
-                    Your message is ready to send. I’ll be in touch soon — or
-                    call me anytime at {AGENT.phone}.
+                    Your email app should have opened with your message ready —
+                    press send there and it comes straight to me. If nothing
+                    opened, reach me at{' '}
+                    <a href={`mailto:${AGENT.email}`}>{AGENT.email}</a> or call{' '}
+                    <a href={AGENT.phoneHref}>{AGENT.phone}</a>.
                   </p>
                 </div>
               ) : (
