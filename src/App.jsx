@@ -75,19 +75,29 @@ function KeyIcon() {
       height="19"
       aria-hidden="true"
     >
+      {/* bow (the ring you hold) */}
       <circle
-        cx="11"
-        cy="11"
-        r="7"
+        cx="10.5"
+        cy="16"
+        r="6"
         fill="none"
         stroke="currentColor"
-        strokeWidth="2.4"
+        strokeWidth="3"
       />
+      {/* shaft, running out of the bow */}
       <path
-        d="M16 16 L28 28 M23 23 L27 19 M19 27 L23 23"
+        d="M16 16 H28.5"
         fill="none"
         stroke="currentColor"
-        strokeWidth="2.4"
+        strokeWidth="3"
+        strokeLinecap="round"
+      />
+      {/* two bittings dropping off the shaft near the tip */}
+      <path
+        d="M22.5 16 V21.5 M27.5 16 V19.5"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="3"
         strokeLinecap="round"
       />
     </svg>

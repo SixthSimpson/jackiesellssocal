@@ -269,6 +269,8 @@ p.eyebrow.center::before { display: none; }
 
 /* icon micro-animations */
 .ico { flex-shrink: 0; }
+/* Turn about the bow, not the icon's centre — a key pivots where you hold it. */
+.ico-key { transform-origin: 33% 50%; }
 .btn:hover .ico-key { animation: key-turn 0.7s cubic-bezier(0.22, 0.8, 0.36, 1); }
 @keyframes key-turn {
   0% { transform: rotate(0); } 45% { transform: rotate(-32deg); } 100% { transform: rotate(0); }
