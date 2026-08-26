@@ -1,33 +1,67 @@
+/* ═══════════════════════════════════════════════════════════
+   Jacqueline Horn — Power Brokers
+   West LA warmth: stucco, terracotta, canyon sage, brass,
+   with the Pacific kept as an accent rather than the whole palette.
+   ═══════════════════════════════════════════════════════════ */
+
 :root {
-  /* Blue palette — navy depth, azure mid-tones, gold accent from the logo */
-  --navy-deep: #0f1a33;
-  --navy: #1b2a4a;
-  --navy-700: #21345e;
-  --indigo: #3a3b6b;
-  --azure: #2e6fa7;
-  --azure-light: #3e8fc4;
-  --sky: #7fb8dc;
-  --sky-pale: #bfdff2;
-  --mist: #eaf3f9;
-  --paper: #fbfdfe;
-  --white: #ffffff;
+  /* ── Warm neutrals (the grounds) ── */
+  --cream: #fbf7f0;
+  --stucco: #f4ede1;
+  --sand: #e9dcc6;
+  --clay-pale: #e5c9b6;
+  --white: #fffdfa;
 
-  --gold: #caa46a;
-  --gold-soft: #e4c489;
-  --sand: #e0d3b8;
+  /* ── Terracotta (roof tile, the primary accent) ── */
+  --terracotta: #be5f3f;
+  --terracotta-deep: #9a4a30;
+  --terracotta-soft: #d98a6b;
 
-  --ink: #14203a;
-  --muted: #55637e;
-  --line: #dce7f0;
+  /* ── Brass & oak (hardware, warmth) ── */
+  --brass: #b8894a;
+  --brass-soft: #d9b37c;
+  --oak: #8a6a4b;
+  --oak-deep: #5c452f;
 
-  --font: 'Segoe UI', system-ui, -apple-system, Roboto, Helvetica, Arial,
-    sans-serif;
-  --serif: 'Georgia', 'Times New Roman', serif;
+  /* ── Canyon sage (foliage, the cool counterweight) ── */
+  --sage: #7e8f72;
+  --sage-deep: #55634c;
+  --sage-mist: #c9d2bf;
 
-  --radius: 16px;
-  --shadow: 0 12px 32px -12px rgba(15, 26, 51, 0.28);
-  --shadow-lg: 0 24px 60px -20px rgba(15, 26, 51, 0.42);
+  /* ── Pacific (coastal accent only) ── */
+  --pacific: #3f7189;
+  --pacific-light: #6fa0b4;
+  --pacific-mist: #c3d9e1;
+
+  /* ── Ink ── */
+  --ink: #2b2520;
+  --ink-soft: #4a423a;
+  --muted: #6e6459;
+  --line: #e0d5c4;
+
+  /* ── Type ── */
+  --display: 'Fraunces', 'Georgia', 'Times New Roman', serif;
+  --font: 'Instrument Sans', system-ui, -apple-system, 'Segoe UI', Roboto,
+    Helvetica, Arial, sans-serif;
+
+  /* ── Form ── */
+  --radius: 14px;
+  --radius-lg: 22px;
+  --radius-arch: 160px 160px 12px 12px; /* Spanish Revival arch */
+
+  /* Warm-tinted shadows — cool shadows over warm grounds read as mud. */
+  --shadow: 0 10px 28px -14px rgba(74, 52, 36, 0.34);
+  --shadow-lg: 0 26px 60px -24px rgba(74, 52, 36, 0.44);
+  --shadow-inset: inset 0 1px 0 rgba(255, 253, 250, 0.7);
+
   --max: 1140px;
+
+  /* ── Texture ──
+     Procedural, so it stays crisp at any resolution and costs ~1KB.
+     Grain is desaturated in-filter (feColorMatrix) rather than with a CSS
+     filter, which would force a full-screen repaint on every scroll. */
+  --grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23g)'/%3E%3C/svg%3E");
+  --stucco-tex: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='420' height='420'%3E%3Cfilter id='s'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.035' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='420' height='420' filter='url(%23s)'/%3E%3C/svg%3E");
 }
 
 * {
@@ -42,19 +76,50 @@ body {
   margin: 0;
   font-family: var(--font);
   color: var(--ink);
-  background: var(--mist);
+  background: var(--stucco);
   line-height: 1.65;
   overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
 }
 
+/* Film grain over the whole page — the single biggest cure for flat vector
+   artwork. Fixed, non-interactive, and above the scenery but below nothing
+   the user can touch. */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  pointer-events: none;
+  background-image: var(--grain);
+  opacity: 0.15;
+  mix-blend-mode: multiply;
+}
+
 h1,
 h2,
 h3 {
-  font-family: var(--serif);
-  line-height: 1.2;
-  letter-spacing: -0.01em;
+  font-family: var(--display);
+  font-weight: 500;
+  line-height: 1.12;
+  letter-spacing: -0.015em;
   margin: 0 0 0.5em;
+}
+
+/* Fraunces carries an optical-size axis: larger text wants a higher opsz so
+   the contrast opens up, small text wants it low so it stays sturdy. */
+h1 {
+  font-size: clamp(2.5rem, 5.4vw, 4.1rem);
+  font-variation-settings: 'opsz' 110;
+  letter-spacing: -0.025em;
+}
+h2 {
+  font-size: clamp(1.85rem, 3.4vw, 2.6rem);
+  font-variation-settings: 'opsz' 60;
+}
+h3 {
+  font-size: 1.2rem;
+  font-variation-settings: 'opsz' 24;
 }
 
 p {
@@ -67,7 +132,12 @@ img {
 }
 
 a {
-  color: var(--azure);
+  color: var(--terracotta-deep);
+}
+
+::selection {
+  background: var(--brass-soft);
+  color: var(--oak-deep);
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -81,5 +151,14 @@ a {
   .reveal {
     opacity: 1 !important;
     transform: none !important;
+  }
+}
+
+/* Blend modes are expensive to composite on phones; the grain reads fine
+   with plain alpha, so drop the blend and lighten it slightly. */
+@media (max-width: 600px) {
+  body::after {
+    mix-blend-mode: normal;
+    opacity: 0.1;
   }
 }
