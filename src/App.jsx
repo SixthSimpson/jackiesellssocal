@@ -1,14 +1,14 @@
-import { useEffect, useState, useSyncExternalStore } from "react";
+import { useEffect, useState } from "react";
 import "./App.css";
 import logo from "/logo.svg";
 
-// Two frames from the same shoot: the closer, smiling one leads the page,
-// the wider seated one anchors the About section further down.
+// Two frames from the same shoot: the closer, smiling one sits in the
+// facade's arched window, the thoughtful one in the sala's deep-set window.
 const profilePhoto = `${import.meta.env.BASE_URL}Jackie_Profile.JPG`;
 const aboutPhoto = `${import.meta.env.BASE_URL}Jackie_Photo.jpg`;
 
 const AGENT = {
-  name: "Jacqueline Horn",
+  name: "Jacqueline Horn Hernandez",
   brokerage: "Power Brokers",
   email: "listedbyjackie@gmail.com",
   phone: "310-880-0846",
@@ -685,457 +685,497 @@ function CardArt({ kind }) {
   );
 }
 
-/* ── Fixed sky: morning → afternoon → dusk ─────────────────── */
-function Sky() {
+/* ── Seeded randomness ─────────────────────────────────────────
+   The organic pieces (bougainvillea, chipped plaster, petals) are
+   generated once at module load from fixed seeds, so every render and
+   every visitor sees the same garden. */
+function seeded(seed) {
+  let s = seed;
+  return () => {
+    s = (s * 1664525 + 1013904223) % 4294967296;
+    return s / 4294967296;
+  };
+}
+const r1 = (n) => Math.round(n * 10) / 10;
+
+/* ── Bougainvillea ─────────────────────────────────────────────
+   What you see on bougainvillea is bracts, not petals: papery magenta
+   leaves in loose clusters around tiny cream flowers. */
+const BRACT_TONES = ["#d42a78", "#b81d62", "#e0508f", "#c8246a", "#a3154f"];
+const LEAF_TONES = ["#3e6b36", "#4f7d42", "#355c2f"];
+
+function makeCluster(rand, cx, cy, R) {
+  const bracts = [];
+  const n = Math.round(R * 0.95);
+  for (let i = 0; i < n; i++) {
+    const a = rand() * Math.PI * 2;
+    const d = Math.sqrt(rand()) * R * 0.72;
+    bracts.push({
+      cx: r1(cx + Math.cos(a) * d),
+      cy: r1(cy + Math.sin(a) * d),
+      rx: r1(4.6 + rand() * 2.4),
+      ry: r1(3.6 + rand() * 1.8),
+      rot: Math.round(rand() * 180),
+      fill: BRACT_TONES[Math.floor(rand() * BRACT_TONES.length)],
+    });
+  }
+  const leaves = [];
+  const nl = 2 + Math.floor(rand() * 3);
+  for (let i = 0; i < nl; i++) {
+    const a = rand() * Math.PI * 2;
+    const d = R * (0.62 + rand() * 0.35);
+    leaves.push({
+      x: r1(cx + Math.cos(a) * d),
+      y: r1(cy + Math.sin(a) * d),
+      rot: Math.round((a * 180) / Math.PI),
+      len: r1(9 + rand() * 7),
+      fill: LEAF_TONES[Math.floor(rand() * LEAF_TONES.length)],
+    });
+  }
+  const florets = [0, 1, 2].map(() => ({
+    x: r1(cx + (rand() - 0.5) * R * 0.8),
+    y: r1(cy + (rand() - 0.5) * R * 0.8),
+  }));
+  return { bracts, leaves, florets };
+}
+
+const leafPath = (len) =>
+  `M0 0Q${r1(len / 2)} ${r1(-len * 0.34)} ${len} 0Q${r1(len / 2)} ${r1(len * 0.34)} 0 0Z`;
+
+function Cluster({ c, i }) {
   return (
-    <div className="sky" aria-hidden="true">
-      <div className="sky-layer sky-day" />
-      <div className="sky-layer sky-mid" />
-      <div className="sky-layer sky-dusk" />
-      <svg className="sun" viewBox="0 0 200 200" width="150" height="150">
-        <g className="sun-rays">
-          <g
-            fill="none"
-            stroke="var(--brass-soft)"
-            strokeWidth="4"
-            strokeLinecap="round"
-            opacity="0.8"
-          >
-            <line x1="100" y1="14" x2="100" y2="34" />
-            <line x1="100" y1="166" x2="100" y2="186" />
-            <line x1="14" y1="100" x2="34" y2="100" />
-            <line x1="166" y1="100" x2="186" y2="100" />
-            <line x1="39" y1="39" x2="53" y2="53" />
-            <line x1="147" y1="147" x2="161" y2="161" />
-            <line x1="39" y1="161" x2="53" y2="147" />
-            <line x1="147" y1="53" x2="161" y2="39" />
-          </g>
-        </g>
-        <circle
-          cx="100"
-          cy="100"
-          r="48"
-          fill="var(--brass-soft)"
-          opacity="0.45"
+    <g className="bloom" style={{ "--i": i }}>
+      {c.leaves.map((l, k) => (
+        <path
+          key={`l${k}`}
+          d={leafPath(l.len)}
+          fill={l.fill}
+          transform={`translate(${l.x} ${l.y}) rotate(${l.rot})`}
         />
-        <circle cx="100" cy="100" r="38" fill="#F6D9B8" />
+      ))}
+      {c.bracts.map((b, k) => (
+        <ellipse
+          key={k}
+          cx={b.cx}
+          cy={b.cy}
+          rx={b.rx}
+          ry={b.ry}
+          fill={b.fill}
+          stroke="#7d0f3c"
+          strokeOpacity="0.3"
+          strokeWidth="0.6"
+          transform={`rotate(${b.rot} ${b.cx} ${b.cy})`}
+        />
+      ))}
+      {c.florets.map((f, k) => (
+        <circle key={`f${k}`} cx={f.x} cy={f.y} r="1.3" fill="#fbf1dc" />
+      ))}
+    </g>
+  );
+}
+
+// Coordinates share the vine's 380×640 viewBox, laid over the arched
+// window so the arch centre lands at (110, 240) with the vine riding a
+// 212-unit radius just outside the plaster molding.
+const vineRand = seeded(1926);
+const VINE_CLUSTERS = [
+  [316, 530, 13], [327, 458, 16], [315, 390, 12], [329, 318, 18],
+  [321, 208, 20], [297, 140, 24], [262, 92, 22], [210, 52, 20],
+  [147, 30, 18], [82, 32, 15], [33, 48, 11], [19, 96, 9],
+  [289, 174, 13], [294, 226, 10], [233, 110, 12], [239, 150, 9],
+].map(([x, y, r]) => makeCluster(vineRand, x, y, r));
+
+const boxRand = seeded(1932);
+const BOX_CLUSTERS = [
+  [104, 12, 14], [222, 8, 16], [338, 11, 14], [160, 22, 9], [282, 20, 10],
+  [58, 30, 8], [390, 30, 8],
+].map(([x, y, r]) => makeCluster(boxRand, x, y, r));
+
+function Bougainvillea() {
+  return (
+    <svg className="vine" viewBox="0 0 380 640" aria-hidden="true">
+      <g fill="none" stroke="#5a3f26" strokeLinecap="round">
+        <path
+          className="vine-stem"
+          pathLength="1"
+          strokeWidth="3.4"
+          d="M252 604 C300 580 332 520 326 452 S316 300 322 240 A212 212 0 0 0 31 46 C15 60 12 86 18 112"
+        />
+        <path
+          className="vine-stem vine-late"
+          pathLength="1"
+          strokeWidth="2"
+          d="M284 118 C291 150 285 190 294 234"
+        />
+        <path
+          className="vine-stem vine-late"
+          pathLength="1"
+          strokeWidth="2"
+          d="M232 66 C237 92 230 120 238 154"
+        />
+      </g>
+      {VINE_CLUSTERS.map((c, i) => (
+        <Cluster key={i} c={c} i={i} />
+      ))}
+    </svg>
+  );
+}
+
+/* ── Wrought-iron window box under the sill ── */
+function WindowBox() {
+  const bars = [];
+  for (let x = 48; x <= 392; x += 21.5) bars.push(x);
+  return (
+    <svg className="window-box" viewBox="0 0 440 110" aria-hidden="true">
+      <defs>
+        <linearGradient id="potClay" x1="0" x2="1">
+          <stop offset="0" stopColor="#d9804f" />
+          <stop offset="0.5" stopColor="#bf5f31" />
+          <stop offset="1" stopColor="#8f3d1c" />
+        </linearGradient>
+      </defs>
+      {/* terracotta pots behind the ironwork */}
+      {[70, 185, 300].map((x) => (
+        <g key={x}>
+          <path d={`M${x} 24 H${x + 70} L${x + 62} 72 H${x + 8} Z`} fill="url(#potClay)" />
+          <rect x={x - 4} y="18" width="78" height="10" rx="2" fill="#c96a3a" />
+        </g>
+      ))}
+      {/* foliage mounded over the rims */}
+      <g>
+        {[
+          [100, 20, 30, 13, "#355c2f"], [220, 16, 34, 14, "#3e6b36"], [336, 19, 30, 13, "#355c2f"],
+          [150, 24, 22, 10, "#4f7d42"], [280, 24, 24, 10, "#4f7d42"], [60, 28, 18, 9, "#3e6b36"],
+          [386, 28, 18, 9, "#3e6b36"],
+        ].map(([cx, cy, rx, ry, fill], i) => (
+          <ellipse key={i} cx={cx} cy={cy} rx={rx} ry={ry} fill={fill} />
+        ))}
+      </g>
+      {BOX_CLUSTERS.map((c, i) => (
+        <Cluster key={i} c={c} i={i + VINE_CLUSTERS.length} />
+      ))}
+      {/* the iron basket and its scroll brackets */}
+      <g stroke="#1e1916" fill="none" strokeLinecap="round">
+        <path d="M26 30 H414" strokeWidth="5" />
+        <path d="M36 76 H404" strokeWidth="4" />
+        {bars.map((x) => (
+          <path key={x} d={`M${r1(x)} 30 V76`} strokeWidth="2.6" />
+        ))}
+        {bars.slice(0, -1).map((x, i) =>
+          i % 2 === 0 ? (
+            <circle key={`r${x}`} cx={r1(x + 10.75)} cy="53" r="6" strokeWidth="2" />
+          ) : null,
+        )}
+        <path d="M42 76 C42 100 72 106 80 90 C86 78 72 72 68 82" strokeWidth="3.4" />
+        <path d="M398 76 C398 100 368 106 360 90 C354 78 368 72 372 82" strokeWidth="3.4" />
+      </g>
+      {/* trailing strands spilling over the front */}
+      <g fill="none" stroke="#4f7d42" strokeWidth="1.6" strokeLinecap="round">
+        <path d="M118 30 C114 52 126 72 116 100" />
+        <path d="M232 28 C238 50 226 74 236 106" />
+        <path d="M322 30 C318 48 330 64 324 88" />
+      </g>
+      <g fill="#3e6b36">
+        {[
+          [116, 46, 30], [122, 64, -40], [117, 86, 20], [235, 44, -30], [229, 66, 40],
+          [234, 92, -20], [321, 46, 30], [327, 66, -30],
+        ].map(([x, y, rot], i) => (
+          <path key={i} d={leafPath(9)} transform={`translate(${x} ${y}) rotate(${rot})`} />
+        ))}
+      </g>
+    </svg>
+  );
+}
+
+/* ── Washingtonia palms above the roofline ──
+   The tall, thin Mexican fan palm is the LA street tree. Seen this far
+   off they're silhouettes: a pencil trunk, a shaggy skirt of dead
+   fronds, and a small crown of fan leaves whose tips droop. */
+const FRONDS = [
+  [-170, 40], [-150, 44], [-128, 44], [-106, 42], [-88, 40], [-70, 42],
+  [-50, 44], [-28, 44], [-8, 40], [14, 38], [40, 30], [140, 30], [166, 38],
+  [62, 24], [118, 24],
+];
+function fanFrond(cx, cy, deg, len) {
+  const a = (deg * Math.PI) / 180;
+  // gravity: sideways fronds bend down at the tip
+  const droop = (24 * Math.abs(Math.cos(a)) * Math.PI) / 180;
+  const b = a + (Math.cos(a) >= 0 ? droop : -droop);
+  const px = cx + Math.cos(a) * len * 0.3;
+  const py = cy + Math.sin(a) * len * 0.3;
+  let d = `M${r1(px)} ${r1(py)}`;
+  const spikes = 9;
+  for (let i = 0; i <= spikes; i++) {
+    const t = b + (i / spikes - 0.5) * 0.9;
+    const r = len * (i % 2 ? 0.5 : 0.7);
+    d += `L${r1(px + Math.cos(t) * r)} ${r1(py + Math.sin(t) * r)}`;
+  }
+  return `${d}Z`;
+}
+const PALM_CROWN = FRONDS.map(([deg, len], i) => ({
+  d: fanFrond(70, 56, deg, len),
+  shade: i % 2 === 0,
+}));
+
+function Palm({ className }) {
+  return (
+    <svg className={`palm ${className}`} viewBox="0 0 140 360" aria-hidden="true">
+      <path d="M68 96 Q66 230 65 360 H73 Q71 230 72 96 Z" fill="#7a6552" />
+      <path d="M62 60 C60 74 61 88 64 100 L76 100 C79 88 80 74 78 60 Z" fill="#7d6248" />
+      <g className="palm-crown">
+        <circle cx="70" cy="57" r="17" fill="#4f634a" />
+        {PALM_CROWN.map((f, i) => (
+          <path key={i} d={f.d} fill={f.shade ? "#4f634a" : "#5f7657"} />
+        ))}
+      </g>
+    </svg>
+  );
+}
+
+/* ── Frond shadow raking across the facade ──
+   A feather palm somewhere off to the upper left, its shadow thrown
+   onto the limewash. Blurred once inside the SVG, then only its
+   transform animates, so the blur is never recomputed. */
+function featherFrond([x0, y0], [x1, y1], [x2, y2], maxLen) {
+  let d = `M${x0} ${y0}Q${x1} ${y1} ${x2} ${y2}`;
+  for (let t = 0.06; t < 0.98; t += 0.032) {
+    const u = 1 - t;
+    const x = u * u * x0 + 2 * u * t * x1 + t * t * x2;
+    const y = u * u * y0 + 2 * u * t * y1 + t * t * y2;
+    const tx = 2 * u * (x1 - x0) + 2 * t * (x2 - x1);
+    const ty = 2 * u * (y1 - y0) + 2 * t * (y2 - y1);
+    const tl = Math.hypot(tx, ty);
+    const ux = tx / tl;
+    const uy = ty / tl;
+    const len = maxLen * (1 - 0.62 * t);
+    for (const ang of [0.95, -0.95]) {
+      const dx = ux * Math.cos(ang) - uy * Math.sin(ang);
+      const dy = ux * Math.sin(ang) + uy * Math.cos(ang);
+      d += `M${r1(x)} ${r1(y)}q${r1(dx * len * 0.5)} ${r1(dy * len * 0.5 + len * 0.06)} ${r1(dx * len)} ${r1(dy * len + len * 0.22)}`;
+    }
+  }
+  return d;
+}
+const SHADOW_FRONDS = [
+  featherFrond([0, 30], [260, 40], [580, 250], 96),
+  featherFrond([0, 150], [200, 190], [440, 400], 80),
+  featherFrond([0, 0], [190, -30], [420, 40], 70),
+];
+
+function PalmShadow() {
+  return (
+    <svg className="palm-shadow" viewBox="0 0 640 460" aria-hidden="true">
+      <defs>
+        <filter id="shadowBlur" x="-10%" y="-10%" width="120%" height="120%">
+          <feGaussianBlur stdDeviation="4.5" />
+        </filter>
+      </defs>
+      <g
+        filter="url(#shadowBlur)"
+        fill="none"
+        stroke="#3b2718"
+        strokeWidth="7"
+        strokeLinecap="round"
+      >
+        {SHADOW_FRONDS.map((d, i) => (
+          <path key={i} d={d} />
+        ))}
+      </g>
+    </svg>
+  );
+}
+
+/* ── Petals drifting down the facade ── */
+const petalRand = seeded(1948);
+const PETALS = Array.from({ length: 15 }, () => ({
+  x: r1(50 + petalRand() * 44),
+  y: r1(16 + petalRand() * 24),
+  delay: r1(2.2 + petalRand() * 13),
+  dur: r1(11 + petalRand() * 8),
+  dx: Math.round(-60 - petalRand() * 280),
+  s: r1(0.7 + petalRand() * 0.6),
+  spin: Math.round(260 + petalRand() * 420),
+}));
+
+function Petals() {
+  return (
+    <div className="petals" aria-hidden="true">
+      <svg width="0" height="0" className="svg-defs">
+        <defs>
+          <linearGradient id="petalFill" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stopColor="#ea5b9b" />
+            <stop offset="1" stopColor="#a8185a" />
+          </linearGradient>
+        </defs>
       </svg>
-      {[1, 2, 3].map((n) => (
-        <svg
-          key={n}
-          className={`cloud cloud-${n}`}
-          viewBox="0 0 220 90"
-          width={220 - n * 40}
-          height={90 - n * 15}
+      {PETALS.map((p, i) => (
+        <span
+          key={i}
+          className="petal"
+          style={{
+            left: `${p.x}%`,
+            top: `${p.y}%`,
+            "--delay": `${p.delay}s`,
+            "--dur": `${p.dur}s`,
+            "--dx": `${p.dx}px`,
+            "--s": p.s,
+            "--spin": `${p.spin}deg`,
+          }}
         >
-          <g fill="#FFFDFA" opacity={0.82 - n * 0.14}>
-            <ellipse cx="60" cy="60" rx="55" ry="26" />
-            <ellipse cx="120" cy="45" rx="48" ry="30" />
-            <ellipse cx="170" cy="62" rx="45" ry="22" />
-          </g>
-        </svg>
+          <svg viewBox="0 0 20 20" width="18" height="18">
+            <path d="M10 1C15.5 4 18.5 10 10 19C1.5 10 4.5 4 10 1Z" fill="url(#petalFill)" />
+            <path d="M10 3.5V16" stroke="#f7a8c8" strokeWidth="0.8" opacity="0.6" />
+          </svg>
+        </span>
       ))}
     </div>
   );
 }
 
-/* ── Parallax scene bands ────────────────────────────────────
-   The layers are width:100% SVGs, so their artwork scales with the
-   viewport: a 1440-unit composition renders at ~27% on a 390px phone.
-   On phones we swap in a 680-unit viewBox instead — same physical width,
-   half the units, so the art draws ~2x larger — and aim that window at
-   each scene's landmark rather than its empty middle. Every layer in a
-   scene shares the 680 width so they stay in parallax alignment. */
-const PHONE_SCENES = "(max-width: 600px)";
-const PHONE_VB_WIDTH = 680;
-
-function usePhoneScenes() {
-  return useSyncExternalStore(
-    (onChange) => {
-      const mq = window.matchMedia(PHONE_SCENES);
-      mq.addEventListener("change", onChange);
-      return () => mq.removeEventListener("change", onChange);
-    },
-    () => window.matchMedia(PHONE_SCENES).matches,
-  );
-}
-
-// `focus` is the left edge of the phone window, in viewBox units.
-function useSceneBox(focus) {
-  const phone = usePhoneScenes();
-  return (height) =>
-    phone ? `${focus} 0 ${PHONE_VB_WIDTH} ${height}` : `0 0 1440 ${height}`;
-}
-
-function SceneDowntown() {
-  const box = useSceneBox(380); // repeating skyline — centre is fine
+/* ── SOLD sign on a wrought-iron bracket ── */
+function IronSign() {
   return (
-    <div className="scene scene-downtown" aria-hidden="true">
-      <svg
-        className="p-layer"
-        data-speed="0.12"
-        viewBox={box(260)}
-        preserveAspectRatio="xMidYMax slice"
-      >
-        <defs>
-          <linearGradient id="dtFar" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0" stopColor="#E5C9B6" />
-            <stop offset="1" stopColor="#F2DFCB" />
-          </linearGradient>
-        </defs>
-        <g fill="url(#dtFar)" opacity="0.62">
-          <rect x="40" y="120" width="70" height="140" />
-          <rect x="150" y="80" width="60" height="180" />
-          <rect x="260" y="140" width="90" height="120" />
-          <rect x="420" y="60" width="55" height="200" />
-          <rect x="530" y="110" width="80" height="150" />
-          <rect x="700" y="40" width="65" height="220" />
-          <rect x="830" y="130" width="75" height="130" />
-          <rect x="960" y="70" width="60" height="190" />
-          <rect x="1080" y="120" width="85" height="140" />
-          <rect x="1230" y="90" width="60" height="170" />
-          <rect x="1340" y="140" width="70" height="120" />
+    <svg className="iron-sign" viewBox="0 0 150 90" aria-hidden="true">
+      <defs>
+        <linearGradient id="signWalnut" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stopColor="#6a4530" />
+          <stop offset="1" stopColor="#3f271a" />
+        </linearGradient>
+      </defs>
+      <rect x="1" y="4" width="8" height="46" rx="2" fill="#1e1916" />
+      <circle cx="5" cy="10" r="1.6" fill="#7a6656" />
+      <circle cx="5" cy="44" r="1.6" fill="#7a6656" />
+      <g stroke="#1e1916" fill="none" strokeLinecap="round">
+        <path d="M8 14 H138" strokeWidth="4" />
+        <path d="M8 44 C40 44 70 34 88 14" strokeWidth="3" />
+        <path d="M28 40 C28 29 43 27 45 35 C46 41 39 42 38 37" strokeWidth="2.2" />
+        <path d="M138 14 C147 14 147 25 139 25 C134 25 134 19 138 19" strokeWidth="2.4" />
+      </g>
+      <g className="sold-swing">
+        <path d="M46 14 V36 M120 14 V36" stroke="#1e1916" strokeWidth="1.8" />
+        <rect x="32" y="34" width="102" height="42" rx="4" fill="url(#signWalnut)" />
+        <g stroke="#2e1c12" strokeWidth="0.8" opacity="0.6">
+          <path d="M36 44 H130 M36 58 H130 M36 68 H128" />
         </g>
-      </svg>
-      <svg
-        className="p-layer"
-        data-speed="0.28"
-        viewBox={box(240)}
-        preserveAspectRatio="xMidYMax slice"
-      >
-        <defs>
-          <linearGradient id="dtMid" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0" stopColor="#C9A87C" />
-            <stop offset="1" stopColor="#A8845C" />
-          </linearGradient>
-        </defs>
-        <g fill="url(#dtMid)" opacity="0.85">
-          <rect x="0" y="110" width="80" height="130" />
-          <rect x="120" y="60" width="70" height="180" />
-          <polygon points="270,240 270,90 305,50 340,90 340,240" />
-          <rect x="420" y="100" width="90" height="140" />
-          <rect x="580" y="30" width="60" height="210" />
-          <circle cx="610" cy="26" r="10" />
-          <rect x="720" y="90" width="75" height="150" />
-          <rect x="860" y="50" width="65" height="190" />
-          <rect x="990" y="120" width="95" height="120" />
-          <rect x="1140" y="70" width="70" height="170" />
-          <rect x="1290" y="110" width="80" height="130" />
-        </g>
-      </svg>
-      <svg
-        className="p-layer"
-        data-speed="0.5"
-        viewBox={box(220)}
-        preserveAspectRatio="xMidYMax slice"
-      >
-        <defs>
-          <linearGradient id="dtNear" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0" stopColor="#6E5439" />
-            <stop offset="1" stopColor="#4A3626" />
-          </linearGradient>
-        </defs>
-        <g fill="url(#dtNear)">
-          <rect x="20" y="80" width="95" height="140" />
-          <rect x="170" y="40" width="75" height="180" />
-          <rect x="300" y="100" width="110" height="120" />
-          <polygon points="480,220 480,60 520,20 560,60 560,220" />
-          <rect x="640" y="70" width="85" height="150" />
-          <rect x="790" y="30" width="70" height="190" />
-          <rect x="920" y="90" width="100" height="130" />
-          <rect x="1090" y="50" width="80" height="170" />
-          <rect x="1240" y="95" width="90" height="125" />
-          <rect x="1390" y="60" width="50" height="160" />
-        </g>
-        <g fill="#D9B37C" className="windows">
-          <rect x="40" y="100" width="8" height="10" />
-          <rect x="60" y="100" width="8" height="10" />
-          <rect x="40" y="125" width="8" height="10" />
-          <rect x="80" y="125" width="8" height="10" />
-          <rect x="190" y="60" width="8" height="10" />
-          <rect x="210" y="85" width="8" height="10" />
-          <rect x="190" y="110" width="8" height="10" />
-          <rect x="325" y="120" width="8" height="10" />
-          <rect x="350" y="145" width="8" height="10" />
-          <rect x="500" y="80" width="8" height="10" />
-          <rect x="525" y="105" width="8" height="10" />
-          <rect x="660" y="90" width="8" height="10" />
-          <rect x="690" y="115" width="8" height="10" />
-          <rect x="810" y="55" width="8" height="10" />
-          <rect x="835" y="80" width="8" height="10" />
-          <rect x="945" y="110" width="8" height="10" />
-          <rect x="975" y="135" width="8" height="10" />
-          <rect x="1110" y="75" width="8" height="10" />
-          <rect x="1140" y="100" width="8" height="10" />
-          <rect x="1265" y="115" width="8" height="10" />
-        </g>
-      </svg>
-    </div>
-  );
-}
-
-function SceneHollywood() {
-  const box = useSceneBox(760); // frame the HOLLYWOOD sign (x 960–1300)
-  return (
-    <div className="scene scene-hollywood" aria-hidden="true">
-      <svg
-        className="p-layer"
-        data-speed="0.15"
-        viewBox={box(300)}
-        preserveAspectRatio="xMidYMax slice"
-      >
-        <defs>
-          <linearGradient id="hwFar" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0" stopColor="#C9D2BF" />
-            <stop offset="1" stopColor="#A9B79C" />
-          </linearGradient>
-        </defs>
-        <path
-          d="M0 300 L0 190 Q180 90 380 170 Q560 240 760 150 Q980 60 1180 160 Q1320 230 1440 180 L1440 300 Z"
-          fill="url(#hwFar)"
-          opacity="0.6"
-        />
-      </svg>
-      <svg
-        className="p-layer"
-        data-speed="0.3"
-        viewBox={box(300)}
-        preserveAspectRatio="xMidYMax slice"
-      >
-        <defs>
-          <linearGradient id="hwNear" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0" stopColor="#7E8F72" />
-            <stop offset="1" stopColor="#4B5742" />
-          </linearGradient>
-        </defs>
-        <path
-          d="M0 300 L0 220 Q220 130 460 210 Q660 270 900 190 Q1140 110 1440 220 L1440 300 Z"
-          fill="url(#hwNear)"
-          opacity="0.95"
-        />
-        <g
-          className="holly-sign"
-          fill="#FBF7F0"
-          fontFamily="Arial Black, Arial, sans-serif"
-          fontSize="32"
-          fontWeight="900"
+        <rect x="37" y="39" width="92" height="32" rx="2" fill="none" stroke="#e3a42f" strokeWidth="1.2" opacity="0.85" />
+        <text
+          x="83"
+          y="63"
+          textAnchor="middle"
+          fontFamily="'Ibarra Real Nova', Georgia, serif"
+          fontSize="21"
+          fontWeight="600"
+          letterSpacing="4"
+          fill="#f1e5c8"
         >
-          <text x="960" y="160" transform="rotate(-4 960 160)">
-            H
-          </text>
-          <text x="998" y="156" transform="rotate(-3 998 156)">
-            O
-          </text>
-          <text x="1038" y="153" transform="rotate(-2 1038 153)">
-            L
-          </text>
-          <text x="1070" y="151">
-            L
-          </text>
-          <text x="1102" y="150" transform="rotate(1 1102 150)">
-            Y
-          </text>
-          <text x="1140" y="151" transform="rotate(2 1140 151)">
-            W
-          </text>
-          <text x="1188" y="153" transform="rotate(3 1188 153)">
-            O
-          </text>
-          <text x="1228" y="156" transform="rotate(4 1228 156)">
-            O
-          </text>
-          <text x="1268" y="160" transform="rotate(5 1268 160)">
-            D
-          </text>
-        </g>
-      </svg>
-      <svg className="star star-a" viewBox="0 0 24 24" width="20" height="20">
-        <path
-          d="M12 2 L14.5 9 L22 9 L16 13.5 L18 21 L12 16.5 L6 21 L8 13.5 L2 9 L9.5 9 Z"
-          fill="var(--brass-soft)"
-        />
-      </svg>
-      <svg className="star star-b" viewBox="0 0 24 24" width="14" height="14">
-        <path
-          d="M12 2 L14.5 9 L22 9 L16 13.5 L18 21 L12 16.5 L6 21 L8 13.5 L2 9 L9.5 9 Z"
-          fill="#FFFDFA"
-        />
-      </svg>
-      <svg className="star star-c" viewBox="0 0 24 24" width="17" height="17">
-        <path
-          d="M12 2 L14.5 9 L22 9 L16 13.5 L18 21 L12 16.5 L6 21 L8 13.5 L2 9 L9.5 9 Z"
-          fill="var(--brass-soft)"
-        />
-      </svg>
-    </div>
+          SOLD
+        </text>
+      </g>
+    </svg>
   );
 }
 
-function SceneCoast() {
-  const box = useSceneBox(760); // frame the pier and ferris wheel (x 1050–1440)
+/* ── Iron lantern hung from the apex of the doorway ── */
+function Lantern() {
   return (
-    <div className="scene scene-beach" aria-hidden="true">
-      <svg
-        className="p-layer"
-        data-speed="0.1"
-        viewBox={box(260)}
-        preserveAspectRatio="xMidYMax slice"
-      >
-        <g stroke="#4A423A" strokeWidth="9" opacity="0.9">
-          <line x1="1080" y1="150" x2="1080" y2="260" />
-          <line x1="1140" y1="150" x2="1140" y2="260" />
-          <line x1="1200" y1="150" x2="1200" y2="260" />
-          <line x1="1260" y1="150" x2="1260" y2="260" />
-          <line x1="1320" y1="150" x2="1320" y2="260" />
-          <line x1="1380" y1="150" x2="1380" y2="260" />
-        </g>
-        <rect x="1050" y="134" width="390" height="18" rx="4" fill="#5C452F" />
-        <g className="ferris" transform="translate(1210,88)">
-          <g className="ferris-spin">
-            <circle r="42" fill="none" stroke="#5C452F" strokeWidth="4" />
-            <g stroke="#5C452F" strokeWidth="2.5">
-              <line x1="-42" y1="0" x2="42" y2="0" />
-              <line x1="0" y1="-42" x2="0" y2="42" />
-              <line x1="-30" y1="-30" x2="30" y2="30" />
-              <line x1="-30" y1="30" x2="30" y2="-30" />
-            </g>
-            <g fill="var(--brass)">
-              <circle cx="0" cy="-42" r="6" />
-              <circle cx="0" cy="42" r="6" />
-              <circle cx="-42" cy="0" r="6" />
-              <circle cx="42" cy="0" r="6" />
-              <circle cx="-30" cy="-30" r="6" />
-              <circle cx="30" cy="30" r="6" />
-              <circle cx="-30" cy="30" r="6" />
-              <circle cx="30" cy="-30" r="6" />
-            </g>
-          </g>
-          <polygon points="-14,44 14,44 0,0" fill="#4A423A" />
-        </g>
-      </svg>
-      <svg
-        className="p-layer"
-        data-speed="0.25"
-        viewBox={box(240)}
-        preserveAspectRatio="xMidYMax slice"
-      >
-        {/* Shoreline sits above the wave layer so the sand stays visible */}
+    <div className="lantern" aria-hidden="true">
+      <span className="lantern-glow" />
+      <svg viewBox="0 0 100 176">
         <defs>
-          <linearGradient id="csSand" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0" stopColor="#EFE2CE" />
-            <stop offset="1" stopColor="#D8C4A4" />
-          </linearGradient>
+          <radialGradient id="lampGlass" cx="0.5" cy="0.55" r="0.62">
+            <stop offset="0" stopColor="#fff3cc" />
+            <stop offset="0.45" stopColor="#f8c86e" />
+            <stop offset="1" stopColor="#cf7f2e" />
+          </radialGradient>
         </defs>
-        <path
-          d="M0 240 L0 120 Q360 100 720 118 Q1080 136 1440 110 L1440 240 Z"
-          fill="url(#csSand)"
-        />
-        <g className="beach-palm-a" transform="translate(150,54)">
-          <g className="palm-sway">
-            <path
-              d="M0 130 Q10 60 4 8"
-              stroke="#4A423A"
-              strokeWidth="11"
-              fill="none"
-              strokeLinecap="round"
-            />
-            <g fill="#5C452F">
-              <path d="M4 8 Q-40 -12 -62 10 Q-28 8 4 8 Z" />
-              <path d="M4 8 Q48 -12 70 10 Q36 8 4 8 Z" />
-              <path d="M4 8 Q-18 -36 -40 -30 Q-10 -12 4 8 Z" />
-              <path d="M4 8 Q26 -36 48 -30 Q16 -12 4 8 Z" />
-            </g>
-          </g>
+        <g fill="none" stroke="#1e1916" strokeWidth="2">
+          {[4, 13, 22, 31].map((y) => (
+            <ellipse key={y} cx="50" cy={y} rx="2.6" ry="4.6" />
+          ))}
+          <circle cx="50" cy="40" r="3.4" strokeWidth="2.4" />
+          <path d="M26 68 C15 66 15 53 24 55 M74 68 C85 66 85 53 76 55" strokeWidth="2.2" strokeLinecap="round" />
         </g>
-        <g className="beach-palm-b" transform="translate(340,96) scale(0.72)">
-          <g className="palm-sway-slow">
-            <path
-              d="M0 130 Q-10 60 -4 8"
-              stroke="#4A423A"
-              strokeWidth="11"
-              fill="none"
-              strokeLinecap="round"
-            />
-            <g fill="#5C452F">
-              <path d="M-4 8 Q-48 -12 -70 10 Q-36 8 -4 8 Z" />
-              <path d="M-4 8 Q40 -12 62 10 Q28 8 -4 8 Z" />
-              <path d="M-4 8 Q-26 -36 -48 -30 Q-16 -12 -4 8 Z" />
-              <path d="M-4 8 Q18 -36 40 -30 Q10 -12 -4 8 Z" />
-            </g>
-          </g>
-        </g>
-        <g className="beach-umbrella" transform="translate(576,152)">
-          <line x1="0" y1="0" x2="0" y2="48" stroke="#4A423A" strokeWidth="4" />
-          <path d="M-44 4 A44 44 0 0 1 44 4 Z" fill="#5C452F" />
-          <path d="M-22 4 A22 38 0 0 1 22 4 Z" fill="var(--brass)" />
-        </g>
-      </svg>
-      <svg
-        className="p-layer wave-layer"
-        data-speed="0.4"
-        viewBox={box(120)}
-        preserveAspectRatio="xMidYMax slice"
-      >
-        <path
-          className="wave wave-back"
-          d="M-100 120 L-100 60 Q-25 30 50 60 Q125 90 200 60 Q275 30 350 60 Q425 90 500 60 Q575 30 650 60 Q725 90 800 60 Q875 30 950 60 Q1025 90 1100 60 Q1175 30 1250 60 Q1325 90 1400 60 Q1475 30 1550 60 L1550 120 Z"
-          fill="#6FA0B4"
-          opacity="0.75"
-        />
-        <path
-          className="wave wave-front"
-          d="M-100 120 L-100 80 Q-25 55 50 80 Q125 105 200 80 Q275 55 350 80 Q425 105 500 80 Q575 55 650 80 Q725 105 800 80 Q875 55 950 80 Q1025 105 1100 80 Q1175 55 1250 80 Q1325 105 1400 80 Q1475 55 1550 80 L1550 120 Z"
-          fill="#3F7189"
-        />
+        <path d="M50 44 L76 68 H24 Z" fill="#1e1916" />
+        <rect x="22" y="66" width="56" height="7" rx="1.5" fill="#1e1916" />
+        <rect className="lantern-glass" x="28" y="73" width="44" height="60" fill="url(#lampGlass)" />
+        <ellipse className="lantern-flame" cx="50" cy="106" rx="5" ry="9" fill="#fff7dc" />
+        <path d="M39 73 V133 M61 73 V133 M28 99 H72" stroke="#1e1916" strokeWidth="2.4" />
+        <path d="M27 73 V133 M73 73 V133" stroke="#1e1916" strokeWidth="3.6" />
+        <rect x="22" y="133" width="56" height="7" rx="1.5" fill="#1e1916" />
+        <path d="M28 140 L50 162 L72 140 Z" fill="#1e1916" />
+        <circle cx="50" cy="166" r="3.6" fill="#1e1916" />
       </svg>
     </div>
   );
 }
 
-/* ── Scroll dynamics: sky shift, sun travel, parallax ──────── */
-function useScrollScenery() {
+/* ── Chipped plaster ───────────────────────────────────────────
+   Old limewash falls away in irregular flakes and shows the adobe
+   underneath. A clip-path polygon in percentages keeps the shape
+   responsive; the rim is the same outline pushed out a little and
+   nudged down-right, where the broken edge catches the light. */
+function chipOutline(rand, n) {
+  const pts = [];
+  for (let i = 0; i < n; i++) {
+    let k = 0.8 + rand() * 0.18;
+    if (rand() < 0.24) k -= 0.12 + rand() * 0.12;
+    pts.push([(i / n) * Math.PI * 2 + (rand() - 0.5) * 0.12, k]);
+  }
+  return pts;
+}
+const polygonFrom = (pts, grow = 0) =>
+  `polygon(${pts
+    .map(
+      ([a, k]) =>
+        `${r1(50 + Math.cos(a) * (50 * k + grow))}% ${r1(50 + Math.sin(a) * (50 * k + grow))}%`,
+    )
+    .join(", ")})`;
+
+const PATCHES = [chipOutline(seeded(1781), 30), chipOutline(seeded(1812), 26)].map(
+  (pts) => ({ hole: polygonFrom(pts), rim: polygonFrom(pts, 3) }),
+);
+
+function WornPatch({ className, variant = 0 }) {
+  const p = PATCHES[variant];
+  return (
+    <div className={`worn-patch ${className}`} aria-hidden="true">
+      <span className="worn-rim" style={{ clipPath: p.rim }} />
+      <span className="worn-bricks" style={{ clipPath: p.hole }} />
+    </div>
+  );
+}
+
+/* ── Ragged plaster edges around the exposed adobe wall ── */
+function raggedEdge(rand, { steps = 64, min, max, bottom = false }) {
+  const pts = [];
+  let y = (min + max) / 2;
+  for (let i = 0; i <= steps; i++) {
+    y += (rand() - 0.5) * (max - min) * 0.5;
+    if (rand() < 0.14) y += (rand() - 0.35) * (max - min) * 0.7;
+    y = Math.min(max, Math.max(min, y));
+    pts.push([r1((i / steps) * 100), Math.round(y)]);
+  }
+  const edge = pts
+    .reverse()
+    .map(([x, py]) => (bottom ? `${x}% calc(100% - ${py}px)` : `${x}% ${py}px`))
+    .join(", ");
+  return bottom
+    ? `polygon(0% 100%, 100% 100%, ${edge})`
+    : `polygon(0% 0%, 100% 0%, ${edge})`;
+}
+const EDGE_TOP = raggedEdge(seeded(1769), { min: 8, max: 44 });
+const EDGE_BOTTOM = raggedEdge(seeded(1850), { min: 6, max: 38, bottom: true });
+
+/* ── Header state ── */
+function useScrolled(threshold = 40) {
+  const [scrolled, setScrolled] = useState(false);
   useEffect(() => {
-    const clamp01 = (v) => Math.min(1, Math.max(0, v));
-    const mid = document.querySelector(".sky-mid");
-    const dusk = document.querySelector(".sky-dusk");
-    const sun = document.querySelector(".sun");
-    const layers = Array.from(document.querySelectorAll(".p-layer"));
-
-    let ticking = false;
-    const onScroll = () => {
-      if (ticking) return;
-      ticking = true;
-      requestAnimationFrame(() => {
-        const doc = document.documentElement;
-        const max = doc.scrollHeight - window.innerHeight;
-        const progress = max > 0 ? clamp01(window.scrollY / max) : 0;
-
-        if (mid) mid.style.opacity = clamp01(progress / 0.5);
-        if (dusk) dusk.style.opacity = clamp01((progress - 0.5) / 0.4);
-        if (sun) {
-          sun.style.transform = `translateY(${progress * 58}vh) scale(${1 + progress * 0.35})`;
-        }
-
-        const vh = window.innerHeight;
-        for (const layer of layers) {
-          const speed = parseFloat(layer.dataset.speed || "0.2");
-          const rect = layer.closest("section").getBoundingClientRect();
-          const delta = rect.top + rect.height / 2 - vh / 2;
-          // Amplitude stays under the layer's 60px bottom bleed so edges stay hidden
-          layer.style.transform = `translateY(${delta * speed * 0.1}px)`;
-        }
-        ticking = false;
-      });
-    };
-
+    const onScroll = () => setScrolled(window.scrollY > threshold);
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
-    window.addEventListener("resize", onScroll);
-    return () => {
-      window.removeEventListener("scroll", onScroll);
-      window.removeEventListener("resize", onScroll);
-    };
-  }, []);
+    return () => window.removeEventListener("scroll", onScroll);
+  }, [threshold]);
+  return scrolled;
 }
 
 /* ── Reveal-on-scroll ──────────────────────────────────────── */
@@ -1166,8 +1206,8 @@ function useReveals() {
 function App() {
   const [sent, setSent] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const scrolled = useScrolled();
 
-  useScrollScenery();
   useReveals();
 
   // The mobile menu is a fixed overlay; without this the page scrolls behind it.
@@ -1210,9 +1250,7 @@ function App() {
 
   return (
     <>
-      <Sky />
-
-      <header className="site-header">
+      <header className={`site-header${scrolled ? " is-scrolled" : ""}`}>
         <a className="brand" href="#top" onClick={closeMenu}>
           <img src={logo} alt={`${AGENT.name} logo`} className="brand-logo" />
           <span className="brand-text">
@@ -1254,20 +1292,40 @@ function App() {
       </header>
 
       <main id="top">
-        {/* ── HERO · Downtown skyline ── */}
-        <section className="hero">
-          <div className="hero-inner">
-            <p className="eyebrow">West Los Angeles Real Estate</p>
+        {/* ── HERO · the facade: sky, palms, tile roof, limewash wall ── */}
+        <section className="facade">
+          <div className="sky" aria-hidden="true">
+            <Palm className="palm-far palm-d" />
+            <Palm className="palm-far palm-e" />
+            <Palm className="palm-a" />
+            <Palm className="palm-b" />
+            <Palm className="palm-c" />
+          </div>
+          <div className="rafters" aria-hidden="true" />
+          <div className="roof" aria-hidden="true">
+            <div className="roof-plane" />
+          </div>
+          <PalmShadow />
+
+          <div className="facade-copy">
+            <p className="eyebrow rise" style={{ "--d": "0.2s" }}>
+              West Los Angeles Real Estate
+            </p>
             <h1>
-              Finding your place
-              <br />
-              under the <span className="hl">LA sky</span>.
+              <span className="line">
+                <span style={{ "--d": "0.35s" }}>Finding your place</span>
+              </span>
+              <span className="line">
+                <span style={{ "--d": "0.5s" }}>
+                  under the <em className="hl">LA sky</em>.
+                </span>
+              </span>
             </h1>
-            <p className="hero-sub">
+            <p className="hero-sub rise" style={{ "--d": "0.8s" }}>
               Hi, I’m {AGENT.name} — a {AGENT.brokerage} agent helping families
               buy and sell across Los Angeles for over 10 years.
             </p>
-            <div className="hero-actions">
+            <div className="hero-actions rise" style={{ "--d": "0.95s" }}>
               <a href="#contact" className="btn btn-primary">
                 <KeyIcon />
                 <span>Work with me</span>
@@ -1279,15 +1337,22 @@ function App() {
             </div>
           </div>
 
-          <div className="hero-portrait">
-            <div className="portrait-frame">
-              <img
-                src={profilePhoto}
-                alt={`${AGENT.name}, ${AGENT.brokerage} real estate agent`}
-                fetchPriority="high"
-              />
+          <div className="facade-window">
+            <div className="arch-molding">
+              <div className="arch-reveal">
+                <div className="arch-glass">
+                  <img
+                    src={profilePhoto}
+                    alt={`${AGENT.name}, ${AGENT.brokerage} real estate agent`}
+                    fetchPriority="high"
+                  />
+                </div>
+              </div>
             </div>
-            <div className="portrait-badge">
+            <div className="sill" aria-hidden="true" />
+            <WindowBox />
+            <Bougainvillea />
+            <div className="tile-plaque">
               <strong>{AGENT.name}</strong>
               <span>
                 {AGENT.brokerage} · DRE# {AGENT.dre}
@@ -1295,63 +1360,46 @@ function App() {
             </div>
           </div>
 
-          <SceneDowntown />
+          <Petals />
+
+          <div className="steps" aria-hidden="true">
+            <span className="tread" />
+            <span className="riser" />
+            <span className="tread" />
+            <span className="riser" />
+          </div>
         </section>
 
-        {/* ── STATS ── */}
+        {/* ── STATS · hand-painted tiles set into the wall ── */}
         <section className="stats">
           {STATS.map((s) => (
             <div className="stat reveal" key={s.label}>
-              <span className="stat-value">{s.value}</span>
+              <span className="stat-tile">
+                <span className="stat-value">{s.value}</span>
+              </span>
               <span className="stat-label">{s.label}</span>
             </div>
           ))}
         </section>
 
-        {/* ── ABOUT · framed portrait ── */}
-        <section id="about" className="about">
-          <div className="about-inner">
-            <figure className="profile-card reveal">
-              {/* Softly curved tile roof with a scalloped eave — a straight
-                  triangle read as a child's drawing of a house. */}
-              {/* viewBox ends exactly at the scallop bottom (cy 99 + r 5), so
-                  the negative margin below is a true overlap, not dead space. */}
-              <svg className="roof" viewBox="0 0 300 104" aria-hidden="true">
-                <defs>
-                  <linearGradient id="roofTile" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0" stopColor="#D98A6B" />
-                    <stop offset="1" stopColor="#9A4A30" />
-                  </linearGradient>
-                </defs>
-                {/* chimney with a rounded cap, set behind the roof plane */}
-                <rect x="228" y="24" width="18" height="44" rx="4" fill="#8A6A4B" />
-                <rect x="222" y="17" width="30" height="11" rx="5.5" fill="var(--brass)" />
-                {/* the roof itself: eased pitch, overhanging eaves */}
-                <path
-                  d="M150 6 C168 6 258 74 288 90 C296 94 294 99 287 99 L13 99 C6 99 4 94 12 90 C42 74 132 6 150 6 Z"
-                  fill="url(#roofTile)"
-                />
-                {/* barrel-tile courses following the slope */}
-                <g stroke="#9A4A30" strokeWidth="1.5" opacity="0.45" fill="none">
-                  <path d="M150 22 C164 22 238 78 264 90" />
-                  <path d="M150 22 C136 22 62 78 36 90" />
-                  <path d="M150 44 C160 44 214 82 232 92" />
-                  <path d="M150 44 C140 44 86 82 68 92" />
-                </g>
-                {/* scalloped eave so the bottom edge is not a hard line */}
-                <g fill="#9A4A30" opacity="0.9">
-                  {Array.from({ length: 19 }, (_, i) => (
-                    <circle key={i} cx={17 + i * 15} cy="99" r="5" />
-                  ))}
-                </g>
-              </svg>
-              <div className="photo-wrap">
-                <img
-                  src={aboutPhoto}
-                  alt={`${AGENT.name}, ${AGENT.brokerage} real estate agent`}
-                  loading="lazy"
-                />
+        {/* ── ABOUT · the sala: beamed ceiling, deep-set window ── */}
+        <section id="about" className="sala">
+          <div className="ceiling-beam" aria-hidden="true" />
+          <WornPatch className="patch-sala" />
+          <div className="sala-inner">
+            <figure className="deepset reveal">
+              <div className="deepset-lintel" aria-hidden="true" />
+              <div className="deepset-reveal">
+                <div className="deepset-photo">
+                  <img
+                    src={aboutPhoto}
+                    alt={`${AGENT.name}, ${AGENT.brokerage} real estate agent`}
+                    loading="lazy"
+                  />
+                </div>
               </div>
+              <div className="deepset-sill" aria-hidden="true" />
+              <IronSign />
               <figcaption>
                 <strong>{AGENT.name}</strong>
                 <span>
@@ -1362,44 +1410,6 @@ function App() {
                   genuinely yours.”
                 </em>
               </figcaption>
-              <svg
-                className="sold-sign"
-                viewBox="0 0 120 90"
-                aria-hidden="true"
-              >
-                <rect x="56" y="34" width="7" height="56" fill="var(--oak)" />
-                <g className="sold-swing">
-                  <rect
-                    x="12"
-                    y="8"
-                    width="96"
-                    height="36"
-                    rx="4"
-                    fill="var(--oak-deep)"
-                  />
-                  <rect
-                    x="17"
-                    y="13"
-                    width="86"
-                    height="26"
-                    rx="2"
-                    fill="none"
-                    stroke="var(--brass-soft)"
-                    strokeWidth="1.5"
-                  />
-                  <text
-                    x="60"
-                    y="32"
-                    textAnchor="middle"
-                    fontSize="17"
-                    letterSpacing="2"
-                    fill="var(--brass-soft)"
-                    fontFamily="Georgia, serif"
-                  >
-                    SOLD
-                  </text>
-                </g>
-              </svg>
             </figure>
 
             <div className="about-text reveal">
@@ -1437,19 +1447,21 @@ function App() {
           </div>
         </section>
 
-        {/* ── NEIGHBORHOODS · Hollywood hills ── */}
-        <section id="neighborhoods" className="neighborhoods">
+        {/* ── NEIGHBORHOODS · the loggia, one arch per part of town ── */}
+        <section id="neighborhoods" className="loggia">
           <div className="section-head reveal">
-            <p className="eyebrow center">Where I Work</p>
+            <p className="eyebrow">Where I Work</p>
             <h2>The neighborhoods I know best.</h2>
           </div>
-          <div className="card-grid">
+          <div className="arcade">
             {NEIGHBORHOODS.map((n) => (
-              <article className="hood-card reveal" key={n.title}>
-                <div className="card-art">
-                  <CardArt kind={n.art} />
+              <article className={`arch-card view-${n.art} reveal`} key={n.title}>
+                <div className="arch-opening">
+                  <div className="arch-view">
+                    <CardArt kind={n.art} />
+                  </div>
                 </div>
-                <div className="card-body">
+                <div className="arch-copy">
                   <h3>{n.title}</h3>
                   <p className="card-meta">{n.tags}</p>
                   <p>{n.blurb}</p>
@@ -1461,26 +1473,32 @@ function App() {
               </article>
             ))}
           </div>
-          <SceneHollywood />
         </section>
 
-        {/* ── SERVICES ── */}
-        <section id="services" className="services">
+        {/* ── SERVICES · where the plaster has fallen away ── */}
+        <section id="services" className="adobe">
+          <span className="edge-shadow" aria-hidden="true">
+            <span style={{ clipPath: EDGE_TOP }} />
+          </span>
+          <span className="plaster-edge edge-top" style={{ clipPath: EDGE_TOP }} aria-hidden="true" />
+          <span className="sconce-glow glow-a" aria-hidden="true" />
+          <span className="sconce-glow glow-b" aria-hidden="true" />
+
           <div className="section-head reveal">
-            <p className="eyebrow center">How I Can Help</p>
+            <p className="eyebrow">How I Can Help</p>
             <h2>Full-service guidance, start to finish.</h2>
           </div>
           {/* Alternating rows rather than a row of identical cards — the
-              vignette swaps sides on each entry so the page has a rhythm. */}
+              tiled frame swaps sides on each entry so the page has a rhythm. */}
           <div className="svc-list">
             {SERVICES.map((s, i) => (
               <article className="svc-row reveal" key={s.title}>
-                <div className="svc-art-frame">
+                <div className="svc-frame">
                   <InteriorArt kind={s.art} />
                 </div>
                 <div className="svc-copy">
                   <span className="svc-num">
-                    {String(i + 1).padStart(2, "0")}
+                    <span>{String(i + 1).padStart(2, "0")}</span>
                   </span>
                   <h3>{s.title}</h3>
                   <p>{s.body}</p>
@@ -1488,84 +1506,93 @@ function App() {
               </article>
             ))}
           </div>
+
+          <span className="plaster-edge edge-rim" style={{ clipPath: EDGE_BOTTOM }} aria-hidden="true" />
+          <span className="plaster-edge edge-bottom" style={{ clipPath: EDGE_BOTTOM }} aria-hidden="true" />
         </section>
 
-        {/* ── CONTACT · the coast ── */}
-        <section id="contact" className="contact">
-          <div className="contact-panel reveal">
-            <div className="contact-info">
-              <div className="contact-agent">
-                <img src={profilePhoto} alt="" />
-                <div>
-                  <strong>{AGENT.name}</strong>
-                  <span>{AGENT.brokerage}</span>
+        {/* ── CONTACT · the front door ── */}
+        <section id="contact" className="patio">
+          <WornPatch className="patch-patio" variant={1} />
+          <div className="doorway reveal">
+            <Lantern />
+            <div className="contact-panel">
+              <div className="contact-info">
+                <div className="contact-agent">
+                  <img src={profilePhoto} alt="" />
+                  <div>
+                    <strong>{AGENT.name}</strong>
+                    <span>{AGENT.brokerage}</span>
+                  </div>
                 </div>
+                <p className="eyebrow">Let’s Talk</p>
+                <h2>Ready to make your move?</h2>
+                <p>
+                  Reach out for a no-pressure conversation about buying or selling
+                  in Los Angeles. I’d love to hear about your goals.
+                </p>
+                <ul className="contact-list">
+                  <li>
+                    <span>Phone</span>
+                    <a href={AGENT.phoneHref}>{AGENT.phone}</a>
+                  </li>
+                  <li>
+                    <span>Email</span>
+                    <a href={`mailto:${AGENT.email}`}>{AGENT.email}</a>
+                  </li>
+                  <li>
+                    <span>Brokerage</span>
+                    <p>{AGENT.brokerage}</p>
+                  </li>
+                  <li>
+                    <span>License</span>
+                    <p>DRE# {AGENT.dre}</p>
+                  </li>
+                </ul>
               </div>
-              <p className="eyebrow">Let’s Talk</p>
-              <h2>Ready to make your move?</h2>
-              <p>
-                Reach out for a no-pressure conversation about buying or selling
-                in Los Angeles. I’d love to hear about your goals.
-              </p>
-              <ul className="contact-list">
-                <li>
-                  <span>Phone</span>
-                  <a href={AGENT.phoneHref}>{AGENT.phone}</a>
-                </li>
-                <li>
-                  <span>Email</span>
-                  <a href={`mailto:${AGENT.email}`}>{AGENT.email}</a>
-                </li>
-                <li>
-                  <span>Brokerage</span>
-                  <p>{AGENT.brokerage}</p>
-                </li>
-                <li>
-                  <span>License</span>
-                  <p>DRE# {AGENT.dre}</p>
-                </li>
-              </ul>
-            </div>
 
-            <form className="contact-form" onSubmit={handleSubmit}>
-              {sent ? (
-                <div className="form-success">
-                  <h3>One last step</h3>
-                  <p>
-                    Your email app should have opened with your message ready —
-                    press send there and it comes straight to me. If nothing
-                    opened, reach me at{" "}
-                    <a href={`mailto:${AGENT.email}`}>{AGENT.email}</a> or call{" "}
-                    <a href={AGENT.phoneHref}>{AGENT.phone}</a>.
-                  </p>
-                </div>
-              ) : (
-                <>
-                  <label>
-                    Name
-                    <input type="text" name="name" required />
-                  </label>
-                  <label>
-                    Email
-                    <input type="email" name="email" required />
-                  </label>
-                  <label>
-                    Phone
-                    <input type="tel" name="phone" />
-                  </label>
-                  <label>
-                    How can I help?
-                    <textarea name="message" rows="4" required />
-                  </label>
-                  <button type="submit" className="btn btn-primary">
-                    <SendIcon />
-                    <span>Send message</span>
-                  </button>
-                </>
-              )}
-            </form>
+              <form className="contact-form" onSubmit={handleSubmit}>
+                {sent ? (
+                  <div className="form-success">
+                    <h3>One last step</h3>
+                    <p>
+                      Your email app should have opened with your message ready —
+                      press send there and it comes straight to me. If nothing
+                      opened, reach me at{" "}
+                      <a href={`mailto:${AGENT.email}`}>{AGENT.email}</a> or call{" "}
+                      <a href={AGENT.phoneHref}>{AGENT.phone}</a>.
+                    </p>
+                  </div>
+                ) : (
+                  <>
+                    <label>
+                      Name
+                      <input type="text" name="name" required />
+                    </label>
+                    <label>
+                      Email
+                      <input type="email" name="email" required />
+                    </label>
+                    <label>
+                      Phone
+                      <input type="tel" name="phone" />
+                    </label>
+                    <label>
+                      How can I help?
+                      <textarea name="message" rows="4" required />
+                    </label>
+                    <button type="submit" className="btn btn-primary">
+                      <SendIcon />
+                      <span>Send message</span>
+                    </button>
+                  </>
+                )}
+              </form>
+            </div>
           </div>
-          <SceneCoast />
+          <div className="patio-floor" aria-hidden="true">
+            <div className="patio-floor-plane" />
+          </div>
         </section>
       </main>
 

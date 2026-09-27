@@ -1,67 +1,77 @@
 /* ═══════════════════════════════════════════════════════════
-   Jacqueline Horn — Power Brokers
-   West LA warmth: stucco, terracotta, canyon sage, brass,
-   with the Pacific kept as an accent rather than the whole palette.
+   Jacqueline Horn Hernandez — Power Brokers
+   A Spanish Revival house in the Southern California sun:
+   limewash plaster, adobe brick, saltillo and Malibu tile,
+   walnut beams and wrought iron. Plaster is the ground; iron is
+   the ink; saltillo and Malibu cobalt are the accents.
    ═══════════════════════════════════════════════════════════ */
 
 :root {
-  /* ── Warm neutrals (the grounds) ── */
-  --cream: #fbf7f0;
-  --stucco: #f4ede1;
-  --sand: #e9dcc6;
-  --clay-pale: #e5c9b6;
-  --white: #fffdfa;
+  /* ── Limewash plaster (the grounds) ── */
+  --lime: #f1e6d3;
+  --lime-hi: #f9f2e6;
+  --lime-shade: #e6d4b8;
+  --lime-deep: #d7c09c;
+  --glaze: #f1e5c8;
 
-  /* ── Terracotta (roof tile, the primary accent) ── */
-  --terracotta: #be5f3f;
-  --terracotta-deep: #9a4a30;
-  --terracotta-soft: #d98a6b;
+  /* ── Earth: adobe, saltillo, walnut ── */
+  --adobe: #9a6a48;
+  --adobe-deep: #5b3a27;
+  --adobe-night: #2e1d14;
+  --saltillo: #c2602f;
+  --saltillo-deep: #9a4322;
+  --saltillo-soft: #e0936a;
+  --walnut: #4a2f1f;
+  --walnut-deep: #2f1d12;
 
-  /* ── Brass & oak (hardware, warmth) ── */
-  --brass: #b8894a;
-  --brass-soft: #d9b37c;
-  --oak: #8a6a4b;
-  --oak-deep: #5c452f;
+  /* ── Malibu tile glazes (sharp accents, used sparingly) ── */
+  --cobalt: #1f4a8f;
+  --cobalt-deep: #173a70;
+  --marigold: #e3a42f;
+  --jade: #2c7c6f;
+  --bougainvillea: #c8246a;
 
-  /* ── Canyon sage (foliage, the cool counterweight) ── */
-  --sage: #7e8f72;
-  --sage-deep: #55634c;
-  --sage-mist: #c9d2bf;
+  /* ── Iron & ink ── */
+  --iron: #1e1916;
+  --ink: #2a211b;
+  --ink-soft: #4b3d32;
+  --muted: #74624f;
+  --line: #d9c6a6;
 
-  /* ── Pacific (coastal accent only) ── */
-  --pacific: #3f7189;
-  --pacific-light: #6fa0b4;
-  --pacific-mist: #c3d9e1;
+  /* ── Sky ── */
+  --sky-top: #a9c6d2;
+  --sky-low: #f6dcbf;
 
-  /* ── Ink ── */
-  --ink: #2b2520;
-  --ink-soft: #4a423a;
-  --muted: #6e6459;
-  --line: #e0d5c4;
+  /* ── Type ──
+     Ibarra Real Nova revives the type Joaquín Ibarra cut for the 1780
+     Madrid Quixote; Alegreya Sans is a calligraphic humanist from Buenos
+     Aires. Small caps come from the SC cut, not text-transform. */
+  --display: 'Ibarra Real Nova', 'Iowan Old Style', 'Palatino Linotype', Palatino, Georgia, serif;
+  --font: 'Alegreya Sans', 'Gill Sans', 'Seravek', 'Trebuchet MS', sans-serif;
+  --caps: 'Alegreya Sans SC', 'Alegreya Sans', 'Gill Sans', sans-serif;
 
-  /* ── Type ── */
-  --display: 'Fraunces', 'Georgia', 'Times New Roman', serif;
-  --font: 'Instrument Sans', system-ui, -apple-system, 'Segoe UI', Roboto,
-    Helvetica, Arial, sans-serif;
+  --max: 1160px;
+  --ease: cubic-bezier(0.22, 0.8, 0.36, 1);
 
-  /* ── Form ── */
-  --radius: 14px;
-  --radius-lg: 22px;
-  --radius-arch: 160px 160px 12px 12px; /* Spanish Revival arch */
+  /* Warm, low shadows — the sun here is strong and a little high. */
+  --shadow: 0 12px 26px -14px rgba(62, 36, 20, 0.45);
+  --shadow-lg: 0 30px 60px -28px rgba(62, 36, 20, 0.6);
 
-  /* Warm-tinted shadows — cool shadows over warm grounds read as mud. */
-  --shadow: 0 10px 28px -14px rgba(74, 52, 36, 0.34);
-  --shadow-lg: 0 26px 60px -24px rgba(74, 52, 36, 0.44);
-  --shadow-inset: inset 0 1px 0 rgba(255, 253, 250, 0.7);
-
-  --max: 1140px;
-
-  /* ── Texture ──
-     Procedural, so it stays crisp at any resolution and costs ~1KB.
-     Grain is desaturated in-filter (feColorMatrix) rather than with a CSS
-     filter, which would force a full-screen repaint on every scroll. */
-  --grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23g)'/%3E%3C/svg%3E");
-  --stucco-tex: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='420' height='420'%3E%3Cfilter id='s'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.035' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='420' height='420' filter='url(%23s)'/%3E%3C/svg%3E");
+  /* ── Procedural textures ──
+     Generated SVG (feTurbulence, feDiffuseLighting, displacement), so each
+     tile rasterises once and costs a few KB. The plaster tile is a height
+     map lit from the upper left at ~30°, which lands a flat surface on 50%
+     grey — neutral under soft-light, so it adds relief without tinting. */
+  --tx-plaster: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='560' height='560'%3E%3Cfilter id='f' x='0' y='0' width='100%' height='100%' color-interpolation-filters='sRGB'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.011 0.017' numOctaves='5' seed='11' stitchTiles='stitch'/%3E%3CfeDiffuseLighting surfaceScale='4.6' diffuseConstant='1' lighting-color='%23fff'%3E%3CfeDistantLight azimuth='225' elevation='31'/%3E%3C/feDiffuseLighting%3E%3C/filter%3E%3Crect width='560' height='560' filter='url(%23f)'/%3E%3C/svg%3E");
+  --tx-grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23g)'/%3E%3C/svg%3E");
+  --tx-adobe: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='340' height='195'%3E%3Cdefs%3E%3ClinearGradient id='sh' x1='0' y1='0' x2='0.35' y2='1'%3E%3Cstop offset='0' stop-color='%23fff' stop-opacity='.16'/%3E%3Cstop offset='.45' stop-color='%23fff' stop-opacity='0'/%3E%3Cstop offset='1' stop-color='%23000' stop-opacity='.22'/%3E%3C/linearGradient%3E%3Cfilter id='d' x='-5%' y='-5%' width='110%' height='110%'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.045' numOctaves='2' seed='4' stitchTiles='stitch' result='t'/%3E%3CfeDisplacementMap in='SourceGraphic' in2='t' scale='6' xChannelSelector='R' yChannelSelector='G'/%3E%3C/filter%3E%3Cfilter id='n' x='0' y='0' width='100%' height='100%'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.55' numOctaves='3' seed='9' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .18 0 0 0 0 .1 0 0 0 0 .05 0 0 0 -1.6 1.25'/%3E%3C/filter%3E%3C/defs%3E%3Crect width='340' height='195' fill='%236a4631'/%3E%3Cg filter='url(%23d)'%3E%3Crect x='-56.7' y='5.7' width='113.9' height='28.3' rx='6' fill='%239a6a48'/%3E%3Crect x='-56.7' y='5.7' width='113.9' height='28.3' rx='6' fill='url(%23sh)'/%3E%3Crect x='283.3' y='5.7' width='113.9' height='28.3' rx='6' fill='%239a6a48'/%3E%3Crect x='283.3' y='5.7' width='113.9' height='28.3' rx='6' fill='url(%23sh)'/%3E%3Crect x='66.2' y='5.4' width='93.6' height='28' rx='6' fill='%23906242'/%3E%3Crect x='66.2' y='5.4' width='93.6' height='28' rx='6' fill='url(%23sh)'/%3E%3Crect x='168.8' y='5.2' width='97.9' height='29.1' rx='6' fill='%23825638'/%3E%3Crect x='168.8' y='5.2' width='97.9' height='29.1' rx='6' fill='url(%23sh)'/%3E%3Crect x='275.7' y='5.2' width='121.3' height='28.5' rx='6' fill='%23825638'/%3E%3Crect x='275.7' y='5.2' width='121.3' height='28.5' rx='6' fill='url(%23sh)'/%3E%3Crect x='-64.3' y='5.2' width='121.3' height='28.5' rx='6' fill='%23825638'/%3E%3Crect x='-64.3' y='5.2' width='121.3' height='28.5' rx='6' fill='url(%23sh)'/%3E%3Crect x='-44.8' y='45.4' width='110.6' height='27.6' rx='6' fill='%23b07f5a'/%3E%3Crect x='-44.8' y='45.4' width='110.6' height='27.6' rx='6' fill='url(%23sh)'/%3E%3Crect x='295.2' y='45.4' width='110.6' height='27.6' rx='6' fill='%23b07f5a'/%3E%3Crect x='295.2' y='45.4' width='110.6' height='27.6' rx='6' fill='url(%23sh)'/%3E%3Crect x='74.9' y='44' width='99.3' height='28.3' rx='6' fill='%23906242'/%3E%3Crect x='74.9' y='44' width='99.3' height='28.3' rx='6' fill='url(%23sh)'/%3E%3Crect x='183.2' y='44.3' width='122.4' height='29.2' rx='6' fill='%238c5d3e'/%3E%3Crect x='183.2' y='44.3' width='122.4' height='29.2' rx='6' fill='url(%23sh)'/%3E%3Crect x='314.6' y='44.6' width='95.3' height='28.1' rx='6' fill='%23b07f5a'/%3E%3Crect x='314.6' y='44.6' width='95.3' height='28.1' rx='6' fill='url(%23sh)'/%3E%3Crect x='-25.4' y='44.6' width='95.3' height='28.1' rx='6' fill='%23b07f5a'/%3E%3Crect x='-25.4' y='44.6' width='95.3' height='28.1' rx='6' fill='url(%23sh)'/%3E%3Crect x='-47.2' y='83.3' width='103.1' height='27.1' rx='6' fill='%23825638'/%3E%3Crect x='-47.2' y='83.3' width='103.1' height='27.1' rx='6' fill='url(%23sh)'/%3E%3Crect x='292.8' y='83.3' width='103.1' height='27.1' rx='6' fill='%23825638'/%3E%3Crect x='292.8' y='83.3' width='103.1' height='27.1' rx='6' fill='url(%23sh)'/%3E%3Crect x='64.9' y='84.4' width='97.4' height='29.2' rx='6' fill='%239e6d4a'/%3E%3Crect x='64.9' y='84.4' width='97.4' height='29.2' rx='6' fill='url(%23sh)'/%3E%3Crect x='171.3' y='82.8' width='97.3' height='29.9' rx='6' fill='%23825638'/%3E%3Crect x='171.3' y='82.8' width='97.3' height='29.9' rx='6' fill='url(%23sh)'/%3E%3Crect x='277.6' y='83.3' width='123.9' height='29.4' rx='6' fill='%23906242'/%3E%3Crect x='277.6' y='83.3' width='123.9' height='29.4' rx='6' fill='url(%23sh)'/%3E%3Crect x='-62.4' y='83.3' width='123.9' height='29.4' rx='6' fill='%23906242'/%3E%3Crect x='-62.4' y='83.3' width='123.9' height='29.4' rx='6' fill='url(%23sh)'/%3E%3Crect x='-107.6' y='123.3' width='105.1' height='27.6' rx='6' fill='%23906242'/%3E%3Crect x='-107.6' y='123.3' width='105.1' height='27.6' rx='6' fill='url(%23sh)'/%3E%3Crect x='232.4' y='123.3' width='105.1' height='27.6' rx='6' fill='%23906242'/%3E%3Crect x='232.4' y='123.3' width='105.1' height='27.6' rx='6' fill='url(%23sh)'/%3E%3Crect x='6.5' y='122.5' width='119.5' height='28.5' rx='6' fill='%23906242'/%3E%3Crect x='6.5' y='122.5' width='119.5' height='28.5' rx='6' fill='url(%23sh)'/%3E%3Crect x='135' y='121.6' width='119.4' height='27.4' rx='6' fill='%23825638'/%3E%3Crect x='135' y='121.6' width='119.4' height='27.4' rx='6' fill='url(%23sh)'/%3E%3Crect x='263.3' y='122.5' width='111.5' height='27.5' rx='6' fill='%23b07f5a'/%3E%3Crect x='263.3' y='122.5' width='111.5' height='27.5' rx='6' fill='url(%23sh)'/%3E%3Crect x='-76.7' y='122.5' width='111.5' height='27.5' rx='6' fill='%23b07f5a'/%3E%3Crect x='-76.7' y='122.5' width='111.5' height='27.5' rx='6' fill='url(%23sh)'/%3E%3Crect x='-38.8' y='161.2' width='118.2' height='28.7' rx='6' fill='%238c5d3e'/%3E%3Crect x='-38.8' y='161.2' width='118.2' height='28.7' rx='6' fill='url(%23sh)'/%3E%3Crect x='301.2' y='161.2' width='118.2' height='28.7' rx='6' fill='%238c5d3e'/%3E%3Crect x='301.2' y='161.2' width='118.2' height='28.7' rx='6' fill='url(%23sh)'/%3E%3Crect x='88.3' y='162.2' width='115.8' height='28.7' rx='6' fill='%23b07f5a'/%3E%3Crect x='88.3' y='162.2' width='115.8' height='28.7' rx='6' fill='url(%23sh)'/%3E%3Crect x='213.2' y='162' width='109.9' height='27.1' rx='6' fill='%239a6a48'/%3E%3Crect x='213.2' y='162' width='109.9' height='27.1' rx='6' fill='url(%23sh)'/%3E%3Crect x='332.1' y='161.7' width='125.7' height='29.5' rx='6' fill='%239a6a48'/%3E%3Crect x='332.1' y='161.7' width='125.7' height='29.5' rx='6' fill='url(%23sh)'/%3E%3Crect x='-7.9' y='161.7' width='125.7' height='29.5' rx='6' fill='%239a6a48'/%3E%3Crect x='-7.9' y='161.7' width='125.7' height='29.5' rx='6' fill='url(%23sh)'/%3E%3C/g%3E%3Crect width='340' height='195' filter='url(%23n)' opacity='.55'/%3E%3Cg stroke='%23e2c089' stroke-width='1.1' stroke-linecap='round' opacity='.42'%3E%3Cpath d='M135.3 21.3L134.8 27.1'/%3E%3Cpath d='M138.1 28.3L136.7 33.1'/%3E%3Cpath d='M128.1 23.1L121.7 29.5'/%3E%3Cpath d='M201.7 18.9L197.7 20.5'/%3E%3Cpath d='M188.6 25.7L186.7 30.1'/%3E%3Cpath d='M225.8 16.1L229.7 22.6'/%3E%3Cpath d='M202.5 14.7L208.7 21.7'/%3E%3Cpath d='M285.6 11.5L279.5 15.7'/%3E%3Cpath d='M90.4 55.3L97.3 61.6'/%3E%3Cpath d='M144.8 61.2L144.9 68.3'/%3E%3Cpath d='M88.9 49.6L83.8 56'/%3E%3Cpath d='M85 49.9L82.8 54.2'/%3E%3Cpath d='M262.4 67.6L256.2 73.6'/%3E%3Cpath d='M249.9 63.7L246.9 72.1'/%3E%3Cpath d='M290.2 58L294 63.5'/%3E%3Cpath d='M336.7 55.4L333.1 57.7'/%3E%3Cpath d='M39.9 100L41.9 109.6'/%3E%3Cpath d='M28 94.7L23.6 99.7'/%3E%3Cpath d='M121.7 94.1L114.7 95.9'/%3E%3Cpath d='M86.8 104.5L93.4 108.1'/%3E%3Cpath d='M143.5 96.7L142.4 105.1'/%3E%3Cpath d='M207.8 101.9L204.4 110.1'/%3E%3Cpath d='M241.4 107L234.4 107.2'/%3E%3Cpath d='M330.4 94.8L332.6 101.7'/%3E%3Cpath d='M90.4 131.6L86 131.9'/%3E%3Cpath d='M49.7 140.1L46.8 145.9'/%3E%3Cpath d='M100.2 137.2L99.2 146'/%3E%3Cpath d='M160.1 134L160.7 141.1'/%3E%3Cpath d='M223.6 138.1L224 147.2'/%3E%3Cpath d='M210 143.7L205 145'/%3E%3Cpath d='M165 139.6L167.4 146.5'/%3E%3Cpath d='M316.9 142.7L322.1 150.7'/%3E%3Cpath d='M296.9 137L300.6 141'/%3E%3Cpath d='M66.4 177.3L67.5 185.4'/%3E%3Cpath d='M19.6 167.6L13.3 170.7'/%3E%3Cpath d='M124 184.7L126.1 188.8'/%3E%3Cpath d='M97 172L102.1 175.6'/%3E%3Cpath d='M141.8 180.2L143.5 187.7'/%3E%3Cpath d='M224.5 167.9L229.3 170.5'/%3E%3Cpath d='M255.9 182.3L250 186.4'/%3E%3Cpath d='M308.7 175.9L310.6 179.5'/%3E%3C/g%3E%3C/svg%3E");
+  --tx-saltillo: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='256' height='192'%3E%3Cdefs%3E%3Cfilter id='b'%3E%3CfeGaussianBlur stdDeviation='2.2'/%3E%3C/filter%3E%3Cfilter id='gl'%3E%3CfeGaussianBlur stdDeviation='7'/%3E%3C/filter%3E%3Cfilter id='w' x='-2%' y='-2%' width='104%' height='104%'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.08' numOctaves='2' seed='5' stitchTiles='stitch' result='t'/%3E%3CfeDisplacementMap in='SourceGraphic' in2='t' scale='3' xChannelSelector='R' yChannelSelector='G'/%3E%3C/filter%3E%3Cfilter id='n' x='0' y='0' width='100%' height='100%'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' seed='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .25 0 0 0 0 .1 0 0 0 0 .04 0 0 0 -1.5 1.15'/%3E%3C/filter%3E%3C/defs%3E%3Crect width='256' height='192' fill='%23b5a080'/%3E%3Cg filter='url(%23w)'%3E%3Crect x='2' y='2' width='60' height='60' rx='4' fill='%23bd6233'/%3E%3Crect x='66' y='2' width='60' height='60' rx='4' fill='%23c8693a'/%3E%3Crect x='130' y='2' width='60' height='60' rx='4' fill='%23bd6233'/%3E%3Crect x='194' y='2' width='60' height='60' rx='4' fill='%23c9703f'/%3E%3Crect x='2' y='66' width='60' height='60' rx='4' fill='%23bd6233'/%3E%3Crect x='66' y='66' width='60' height='60' rx='4' fill='%23c9703f'/%3E%3Crect x='130' y='66' width='60' height='60' rx='4' fill='%23bd6233'/%3E%3Crect x='194' y='66' width='60' height='60' rx='4' fill='%23cc6f3c'/%3E%3Crect x='2' y='130' width='60' height='60' rx='4' fill='%23bd6233'/%3E%3Crect x='66' y='130' width='60' height='60' rx='4' fill='%23c8693a'/%3E%3Crect x='130' y='130' width='60' height='60' rx='4' fill='%23bf5f31'/%3E%3Crect x='194' y='130' width='60' height='60' rx='4' fill='%23d07744'/%3E%3C/g%3E%3Cg fill='%23f3b27e' opacity='.28' filter='url(%23gl)'%3E%3Cellipse cx='46.6' cy='44.5' rx='19.5' ry='19.1'/%3E%3Cellipse cx='106' cy='45.6' rx='21.4' ry='10.7'/%3E%3Cellipse cx='175.9' cy='43.4' rx='21.6' ry='15.8'/%3E%3Cellipse cx='218.9' cy='38.1' rx='20.7' ry='13.6'/%3E%3Cellipse cx='32.7' cy='100.9' rx='15.3' ry='17'/%3E%3Cellipse cx='97.1' cy='105.2' rx='25.4' ry='15.5'/%3E%3Cellipse cx='161.4' cy='85.6' rx='18.9' ry='17.6'/%3E%3Cellipse cx='237.8' cy='80.3' rx='24.9' ry='19.8'/%3E%3Cellipse cx='42.2' cy='165.7' rx='15.7' ry='17.6'/%3E%3Cellipse cx='98.9' cy='177.8' rx='17' ry='11.9'/%3E%3Cellipse cx='164.5' cy='172.3' rx='15.9' ry='15.4'/%3E%3Cellipse cx='209.1' cy='170.8' rx='19.8' ry='18.2'/%3E%3C/g%3E%3Cg fill='%236e2a10' opacity='.3' filter='url(%23b)'%3E%3Cellipse cx='49.6' cy='112.6' rx='5.9' ry='1.8'/%3E%3Cellipse cx='80.7' cy='158.1' rx='2.1' ry='3.8'/%3E%3Cellipse cx='207.4' cy='174.2' rx='5.3' ry='5'/%3E%3C/g%3E%3Crect width='256' height='192' filter='url(%23n)' opacity='.4'/%3E%3C/svg%3E");
+  --tx-malibu: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60'%3E%3Cdefs%3E%3CradialGradient id='gz' cx='.3' cy='.25' r='.8'%3E%3Cstop offset='0' stop-color='%23fff' stop-opacity='.45'/%3E%3Cstop offset='.5' stop-color='%23fff' stop-opacity='0'/%3E%3Cstop offset='1' stop-color='%236b4a1e' stop-opacity='.12'/%3E%3C/radialGradient%3E%3Cfilter id='hp' x='-5%' y='-5%' width='110%' height='110%'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.09' numOctaves='2' seed='8' result='t'/%3E%3CfeDisplacementMap in='SourceGraphic' in2='t' scale='2.2' xChannelSelector='R' yChannelSelector='G'/%3E%3C/filter%3E%3C/defs%3E%3Crect x='0' y='0' width='60' height='60' fill='%23f1e5c8'/%3E%3Cg filter='url(%23hp)'%3E%3Ccircle cx='0' cy='0' r='17' fill='%231f4a8f'/%3E%3Ccircle cx='0' cy='0' r='11' fill='%23f1e5c8'/%3E%3Ccircle cx='0' cy='0' r='7' fill='%23e3a42f'/%3E%3Ccircle cx='60' cy='0' r='17' fill='%231f4a8f'/%3E%3Ccircle cx='60' cy='0' r='11' fill='%23f1e5c8'/%3E%3Ccircle cx='60' cy='0' r='7' fill='%23e3a42f'/%3E%3Ccircle cx='0' cy='60' r='17' fill='%231f4a8f'/%3E%3Ccircle cx='0' cy='60' r='11' fill='%23f1e5c8'/%3E%3Ccircle cx='0' cy='60' r='7' fill='%23e3a42f'/%3E%3Ccircle cx='60' cy='60' r='17' fill='%231f4a8f'/%3E%3Ccircle cx='60' cy='60' r='11' fill='%23f1e5c8'/%3E%3Ccircle cx='60' cy='60' r='7' fill='%23e3a42f'/%3E%3Ccircle cx='30' cy='0' r='5' fill='%232c7c6f'/%3E%3Ccircle cx='30' cy='60' r='5' fill='%232c7c6f'/%3E%3Ccircle cx='0' cy='30' r='5' fill='%232c7c6f'/%3E%3Ccircle cx='60' cy='30' r='5' fill='%232c7c6f'/%3E%3Cellipse cx='18' cy='18' rx='3.2' ry='7.5' fill='%23c0582e' transform='rotate(45 18 18)'/%3E%3Cellipse cx='42' cy='18' rx='3.2' ry='7.5' fill='%23c0582e' transform='rotate(-45 42 18)'/%3E%3Cellipse cx='18' cy='42' rx='3.2' ry='7.5' fill='%23c0582e' transform='rotate(-45 18 42)'/%3E%3Cellipse cx='42' cy='42' rx='3.2' ry='7.5' fill='%23c0582e' transform='rotate(45 42 42)'/%3E%3Crect x='20' y='20' width='20' height='20' fill='%232c7c6f' stroke='%231f4a8f' stroke-width='1.6'/%3E%3Crect x='20' y='20' width='20' height='20' fill='%232c7c6f' stroke='%231f4a8f' stroke-width='1.6' transform='rotate(45 30 30)'/%3E%3Crect x='21.5' y='21.5' width='17' height='17' fill='%232c7c6f' transform='rotate(0 30 30)'/%3E%3Ccircle cx='30' cy='30' r='5.5' fill='%23e3a42f' stroke='%231f4a8f' stroke-width='1.4'/%3E%3C/g%3E%3Crect x='0' y='0' width='60' height='60' fill='url(%23gz)'/%3E%3Crect x='0.6' y='0.6' width='58.8' height='58.8' fill='none' stroke='%23c9b48c' stroke-width='1.2'/%3E%3C/svg%3E");
+  --tx-malibu-frame: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cdefs%3E%3CradialGradient id='gz' cx='.3' cy='.25' r='.8'%3E%3Cstop offset='0' stop-color='%23fff' stop-opacity='.45'/%3E%3Cstop offset='.5' stop-color='%23fff' stop-opacity='0'/%3E%3Cstop offset='1' stop-color='%236b4a1e' stop-opacity='.12'/%3E%3C/radialGradient%3E%3Cfilter id='hp' x='-5%' y='-5%' width='110%' height='110%'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.09' numOctaves='2' seed='8' result='t'/%3E%3CfeDisplacementMap in='SourceGraphic' in2='t' scale='2.2' xChannelSelector='R' yChannelSelector='G'/%3E%3C/filter%3E%3C/defs%3E%3Cg id='m'%3E%3Crect x='0' y='0' width='60' height='60' fill='%23f1e5c8'/%3E%3Cg filter='url(%23hp)'%3E%3Ccircle cx='0' cy='0' r='17' fill='%231f4a8f'/%3E%3Ccircle cx='0' cy='0' r='11' fill='%23f1e5c8'/%3E%3Ccircle cx='0' cy='0' r='7' fill='%23e3a42f'/%3E%3Ccircle cx='60' cy='0' r='17' fill='%231f4a8f'/%3E%3Ccircle cx='60' cy='0' r='11' fill='%23f1e5c8'/%3E%3Ccircle cx='60' cy='0' r='7' fill='%23e3a42f'/%3E%3Ccircle cx='0' cy='60' r='17' fill='%231f4a8f'/%3E%3Ccircle cx='0' cy='60' r='11' fill='%23f1e5c8'/%3E%3Ccircle cx='0' cy='60' r='7' fill='%23e3a42f'/%3E%3Ccircle cx='60' cy='60' r='17' fill='%231f4a8f'/%3E%3Ccircle cx='60' cy='60' r='11' fill='%23f1e5c8'/%3E%3Ccircle cx='60' cy='60' r='7' fill='%23e3a42f'/%3E%3Ccircle cx='30' cy='0' r='5' fill='%232c7c6f'/%3E%3Ccircle cx='30' cy='60' r='5' fill='%232c7c6f'/%3E%3Ccircle cx='0' cy='30' r='5' fill='%232c7c6f'/%3E%3Ccircle cx='60' cy='30' r='5' fill='%232c7c6f'/%3E%3Cellipse cx='18' cy='18' rx='3.2' ry='7.5' fill='%23c0582e' transform='rotate(45 18 18)'/%3E%3Cellipse cx='42' cy='18' rx='3.2' ry='7.5' fill='%23c0582e' transform='rotate(-45 42 18)'/%3E%3Cellipse cx='18' cy='42' rx='3.2' ry='7.5' fill='%23c0582e' transform='rotate(-45 18 42)'/%3E%3Cellipse cx='42' cy='42' rx='3.2' ry='7.5' fill='%23c0582e' transform='rotate(45 42 42)'/%3E%3Crect x='20' y='20' width='20' height='20' fill='%232c7c6f' stroke='%231f4a8f' stroke-width='1.6'/%3E%3Crect x='20' y='20' width='20' height='20' fill='%232c7c6f' stroke='%231f4a8f' stroke-width='1.6' transform='rotate(45 30 30)'/%3E%3Crect x='21.5' y='21.5' width='17' height='17' fill='%232c7c6f' transform='rotate(0 30 30)'/%3E%3Ccircle cx='30' cy='30' r='5.5' fill='%23e3a42f' stroke='%231f4a8f' stroke-width='1.4'/%3E%3C/g%3E%3Crect x='0' y='0' width='60' height='60' fill='url(%23gz)'/%3E%3Crect x='0.6' y='0.6' width='58.8' height='58.8' fill='none' stroke='%23c9b48c' stroke-width='1.2'/%3E%3C/g%3E%3Cuse href='%23m' x='0' y='0'/%3E%3Cuse href='%23m' x='60' y='0'/%3E%3Cuse href='%23m' x='120' y='0'/%3E%3Cuse href='%23m' x='0' y='60'/%3E%3Cuse href='%23m' x='60' y='60'/%3E%3Cuse href='%23m' x='120' y='60'/%3E%3Cuse href='%23m' x='0' y='120'/%3E%3Cuse href='%23m' x='60' y='120'/%3E%3Cuse href='%23m' x='120' y='120'/%3E%3C/svg%3E");
+  --tx-wood: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='420' height='140'%3E%3Cfilter id='w' x='0' y='0' width='100%' height='100%' color-interpolation-filters='sRGB'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.005 0.19' numOctaves='3' seed='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='.52 0 0 0 .03 .34 0 0 0 .01 .22 0 0 0 0 0 0 0 0 1'/%3E%3C/filter%3E%3Crect width='420' height='140' filter='url(%23w)'/%3E%3C/svg%3E");
+  --tx-roof: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='34' height='44'%3E%3Cdefs%3E%3ClinearGradient id='p' x1='0' x2='1'%3E%3Cstop offset='0' stop-color='%237c2f17'/%3E%3Cstop offset='.5' stop-color='%23a1462a'/%3E%3Cstop offset='1' stop-color='%23b8583a'/%3E%3C/linearGradient%3E%3ClinearGradient id='c' x1='0' x2='1'%3E%3Cstop offset='0' stop-color='%23e38a5c'/%3E%3Cstop offset='.35' stop-color='%23cf6f43'/%3E%3Cstop offset='.8' stop-color='%239f4226'/%3E%3Cstop offset='1' stop-color='%237a2e17'/%3E%3C/linearGradient%3E%3ClinearGradient id='o' x1='0' y1='0' x2='0' y2='1'%3E%3Cstop offset='0' stop-color='%23000' stop-opacity='0'/%3E%3Cstop offset='.82' stop-color='%23000' stop-opacity='0'/%3E%3Cstop offset='.9' stop-color='%233a1206' stop-opacity='.45'/%3E%3Cstop offset='.94' stop-color='%23fff' stop-opacity='.18'/%3E%3Cstop offset='1' stop-color='%23000' stop-opacity='0'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='34' height='44' fill='url(%23p)'/%3E%3Crect x='7' width='21' height='44' fill='url(%23c)'/%3E%3Crect width='34' height='44' fill='url(%23o)'/%3E%3C/svg%3E");
+  --tx-roof-eave: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='34' height='22'%3E%3Cdefs%3E%3ClinearGradient id='c' x1='0' x2='1'%3E%3Cstop offset='0' stop-color='%23e38a5c'/%3E%3Cstop offset='.35' stop-color='%23cf6f43'/%3E%3Cstop offset='.8' stop-color='%239f4226'/%3E%3Cstop offset='1' stop-color='%237a2e17'/%3E%3C/linearGradient%3E%3ClinearGradient id='p' x1='0' x2='1'%3E%3Cstop offset='0' stop-color='%237c2f17'/%3E%3Cstop offset='.5' stop-color='%23a1462a'/%3E%3Cstop offset='1' stop-color='%23b8583a'/%3E%3C/linearGradient%3E%3C/defs%3E%3Cpath d='M0 0H34V6H0Z' fill='url(%23p)'/%3E%3Cpath d='M-3 6 Q-3 3 0 3 H4 Q7 3 7 6Z M28 6 Q28 3 31 3 H34 Q37 3 37 6Z' fill='%235e2210'/%3E%3Cpath d='M7 0H28V12A10.5 8 0 0 1 7 12Z' fill='url(%23c)'/%3E%3Cellipse cx='17.5' cy='12.5' rx='7.6' ry='5.4' fill='%233d1407'/%3E%3Cellipse cx='17.5' cy='11.2' rx='6.4' ry='3.6' fill='%231f0a03'/%3E%3C/svg%3E");
+  --tx-rafters: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='128' height='96'%3E%3Cdefs%3E%3ClinearGradient id='b' x1='0' x2='1'%3E%3Cstop offset='0' stop-color='%236a4530'/%3E%3Cstop offset='.55' stop-color='%234f3222'/%3E%3Cstop offset='1' stop-color='%233a2418'/%3E%3C/linearGradient%3E%3Cfilter id='s' x='-40%' y='-40%' width='180%' height='180%'%3E%3CfeGaussianBlur stdDeviation='3.4'/%3E%3C/filter%3E%3C/defs%3E%3Cpath d='M60 0H86V44C86 52 80 56 73 56C65 56 60 50 60 44Z' transform='translate(15 17)' fill='%233a2214' opacity='.34' filter='url(%23s)'/%3E%3Cpath d='M60 0H86V44C86 52 80 56 73 56C65 56 60 50 60 44Z' fill='url(%23b)'/%3E%3Cpath d='M60 0H86V3H60Z' fill='%232a1a10' opacity='.6'/%3E%3Cpath d='M62 8V40M84 10V36' stroke='%238a6448' stroke-width='.8' opacity='.5'/%3E%3C/svg%3E");
 }
 
 * {
@@ -75,24 +85,23 @@ html {
 body {
   margin: 0;
   font-family: var(--font);
+  font-size: 1.08rem;
   color: var(--ink);
-  background: var(--stucco);
-  line-height: 1.65;
+  background: var(--lime);
+  line-height: 1.62;
   overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
 }
 
-/* Film grain over the whole page — the single biggest cure for flat vector
-   artwork. Fixed, non-interactive, and above the scenery but below nothing
-   the user can touch. */
+/* Film grain over everything — the cure for flat vector artwork. */
 body::after {
   content: '';
   position: fixed;
   inset: 0;
   z-index: 9999;
   pointer-events: none;
-  background-image: var(--grain);
-  opacity: 0.15;
+  background-image: var(--tx-grain);
+  opacity: 0.13;
   mix-blend-mode: multiply;
 }
 
@@ -101,25 +110,23 @@ h2,
 h3 {
   font-family: var(--display);
   font-weight: 500;
-  line-height: 1.12;
-  letter-spacing: -0.015em;
+  line-height: 1.06;
+  letter-spacing: -0.01em;
   margin: 0 0 0.5em;
+  color: var(--iron);
 }
 
-/* Fraunces carries an optical-size axis: larger text wants a higher opsz so
-   the contrast opens up, small text wants it low so it stays sturdy. */
 h1 {
-  font-size: clamp(2.5rem, 5.4vw, 4.1rem);
-  font-variation-settings: 'opsz' 110;
-  letter-spacing: -0.025em;
+  font-size: clamp(2.7rem, 5.6vw, 4.9rem);
+  font-weight: 500;
+  letter-spacing: -0.02em;
 }
 h2 {
-  font-size: clamp(1.85rem, 3.4vw, 2.6rem);
-  font-variation-settings: 'opsz' 60;
+  font-size: clamp(2rem, 3.8vw, 3.05rem);
 }
 h3 {
-  font-size: 1.2rem;
-  font-variation-settings: 'opsz' 24;
+  font-size: 1.45rem;
+  line-height: 1.15;
 }
 
 p {
@@ -132,12 +139,17 @@ img {
 }
 
 a {
-  color: var(--terracotta-deep);
+  color: var(--saltillo-deep);
 }
 
 ::selection {
-  background: var(--brass-soft);
-  color: var(--oak-deep);
+  background: var(--marigold);
+  color: var(--iron);
+}
+
+:focus-visible {
+  outline: 2px solid var(--cobalt);
+  outline-offset: 3px;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -145,6 +157,7 @@ a {
   *::before,
   *::after {
     animation-duration: 0.01ms !important;
+    animation-delay: 0ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
   }
@@ -152,13 +165,16 @@ a {
     opacity: 1 !important;
     transform: none !important;
   }
+  .petals {
+    display: none;
+  }
 }
 
-/* Blend modes are expensive to composite on phones; the grain reads fine
-   with plain alpha, so drop the blend and lighten it slightly. */
+/* Blend modes are expensive to composite on phones; plain alpha grain is
+   close enough at this size. */
 @media (max-width: 600px) {
   body::after {
     mix-blend-mode: normal;
-    opacity: 0.1;
+    opacity: 0.08;
   }
 }
