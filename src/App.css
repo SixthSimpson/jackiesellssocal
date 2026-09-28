@@ -47,8 +47,6 @@ section {
   padding-top: 8px;
   padding-bottom: 8px;
   background-color: var(--lime-hi);
-  background-image: var(--tx-plaster);
-  background-blend-mode: soft-light;
   box-shadow: 0 1px 0 rgba(120, 80, 40, 0.18);
 }
 .site-header.is-scrolled::after {
@@ -377,8 +375,6 @@ section {
   column-gap: clamp(48px, 8vw, 120px);
   padding: calc(var(--sky-h) + var(--roof-h) + 64px) 6vw 176px;
   background-color: var(--lime);
-  background-image: var(--tx-plaster);
-  background-blend-mode: soft-light;
   overflow: hidden;
   isolation: isolate;
 }
@@ -858,8 +854,6 @@ section {
   gap: clamp(22px, 6vw, 80px);
   padding: 84px 6vw 96px;
   background-color: var(--lime);
-  background-image: var(--tx-plaster);
-  background-blend-mode: soft-light;
 }
 .stat {
   display: grid;
@@ -935,8 +929,6 @@ section {
 .sala {
   padding: 150px 6vw 130px;
   background-color: #ecdcc2;
-  background-image: var(--tx-plaster);
-  background-blend-mode: soft-light;
   isolation: isolate;
   overflow: hidden;
 }
@@ -1129,8 +1121,6 @@ section {
 .loggia {
   padding: 120px 6vw 150px;
   background-color: var(--lime-shade);
-  background-image: var(--tx-plaster);
-  background-blend-mode: soft-light;
   isolation: isolate;
 }
 .loggia::after {
@@ -1267,8 +1257,6 @@ section {
   left: 0;
   right: 0;
   z-index: 2;
-  background-image: var(--tx-plaster);
-  background-blend-mode: soft-light;
   pointer-events: none;
 }
 .edge-top {
@@ -1417,8 +1405,6 @@ section {
 .patio {
   padding: 150px 6vw 0;
   background-color: var(--lime);
-  background-image: var(--tx-plaster);
-  background-blend-mode: soft-light;
   isolation: isolate;
   overflow: hidden;
 }
@@ -1450,8 +1436,6 @@ section {
   padding: 190px 60px 64px;
   border-radius: 544px 544px 0 0 / 216px 216px 0 0;
   background-color: var(--lime-hi);
-  background-image: var(--tx-plaster);
-  background-blend-mode: soft-light;
   box-shadow: inset 0 22px 30px -18px rgba(40, 20, 8, 0.5);
 }
 
@@ -1772,8 +1756,6 @@ section {
     justify-content: center;
     gap: 14px;
     background-color: var(--lime-hi);
-    background-image: var(--tx-plaster);
-    background-blend-mode: soft-light;
     box-shadow: -14px 0 40px rgba(60, 30, 10, 0.25);
     border-left: 16px solid transparent;
     border-image: var(--tx-malibu-frame) 60 round;
